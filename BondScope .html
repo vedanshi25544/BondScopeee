@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BondScope — Invest in Bonds. Understand Your Returns.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --bg: #F7F8FA;
+    --green: #1B7A4D;
+    --slate: #5B7A9D;
+    --bronze: #8A6D3B;
+    --line: #E2E5EA;
+    --muted: #6B7280;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #1F2937;
+    min-height: 100vh;
+  }
+  .mono { font-family: 'Spline Sans Mono', 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+  button { font-family: inherit; }
+  button:focus-visible { outline: 2px solid var(--slate); outline-offset: 2px; }
+  a { color: inherit; }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    border-bottom: 1px solid var(--line);
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .nav-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .brand { font-weight: 800; color: var(--navy); font-size: 17px; letter-spacing: -0.3px; }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-btn {
+    padding: 8px 14px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
+    border: none; cursor: pointer; background: transparent; color: #4B5563;
+  }
+  .nav-btn.active { background: var(--bg); color: var(--navy); }
+  .nav-cta {
+    padding: 9px 16px; border-radius: 8px; border: none; background: var(--navy);
+    color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 56px 0 40px; text-align: center; }
+  .eyebrow { font-size: 11px; font-weight: 700; color: var(--slate); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+  .hero h1 { font-size: 36px; font-weight: 800; color: var(--navy); margin: 0; letter-spacing: -0.5px; line-height: 1.15; }
+  .hero p { max-width: 520px; margin: 16px auto 0; color: #4B5563; font-size: 15px; line-height: 1.6; }
+  .hero-cta {
+    margin-top: 24px; padding: 13px 28px; border-radius: 10px; border: none;
+    background: var(--navy); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+
+  /* ---------- Education cards ---------- */
+  .section { margin-bottom: 44px; }
+  .section h2 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+  .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .edu-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .edu-card .title { font-size: 13.5px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .edu-card .body { font-size: 13px; color: #4B5563; line-height: 1.55; }
+
+  .section-head-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .sample-tag { font-size: 12px; color: var(--muted); }
+  .hint-line { font-size: 12.5px; color: var(--muted); margin-top: 4px; margin-bottom: 18px; }
+
+  /* ---------- Bond cards ---------- */
+  .bond-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .bond-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px;
+    transition: box-shadow .15s, transform .15s;
+  }
+  .bond-card:hover { box-shadow: 0 6px 20px rgba(11,31,58,0.08); transform: translateY(-2px); }
+  .bond-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .bond-issuer { font-size: 15px; font-weight: 700; color: var(--navy); line-height: 1.3; }
+  .bond-type { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .rating-badge {
+    font-size: 12px; font-weight: 700; color: var(--bronze); border: 1px solid #8A6D3B55;
+    background: #8A6D3B0D; border-radius: 6px; padding: 3px 8px; white-space: nowrap;
+  }
+
+  .ytm-row { display: flex; align-items: flex-end; gap: 2px; margin-top: 14px; margin-bottom: 2px; }
+  .ytm-tick { width: 3px; height: 26px; background: var(--green); border-radius: 2px; margin-right: 8px; }
+  .field-label { font-size: 11px; color: var(--muted); display: flex; align-items: center; }
+  .ytm-value { font-size: 24px; font-weight: 700; color: var(--green); }
+
+  .learn-more {
+    background: none; border: none; color: var(--slate); font-size: 12px; font-weight: 600;
+    cursor: pointer; padding: 0; margin-left: 6px; text-decoration: underline; text-underline-offset: 2px;
+  }
+
+  .field-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-top: 16px;
+    padding-top: 14px; border-top: 1px solid var(--line);
+  }
+  .field-value { font-size: 13.5px; font-weight: 600; color: #1F2937; margin-top: 2px; }
+
+  .reason-box {
+    margin-top: 14px; padding: 10px 12px; background: #1B7A4D0D; border-radius: 8px;
+    font-size: 12.5px; color: #1B4D33; line-height: 1.5;
+  }
+
+  .card-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .btn-view {
+    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--navy);
+    background: var(--navy); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn-compare {
+    padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line); background: #fff;
+    color: #374151; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
+  }
+  .btn-compare.active { border-color: var(--slate); background: #5B7A9D15; color: var(--slate); }
+
+  /* ---------- Modals ---------- */
+  .overlay {
+    position: fixed; inset: 0; background: #0B1F3A66; display: none;
+    align-items: center; justify-content: center; z-index: 100; padding: 16px;
+  }
+  .overlay.open { display: flex; }
+  .overlay.bottom-sheet { align-items: flex-end; }
+
+  .modal-detail {
+    background: #fff; border-radius: 16px; max-width: 560px; width: 100%;
+    max-height: 88vh; overflow-y: auto; padding: 28px;
+  }
+  .modal-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .modal-issuer { font-size: 20px; font-weight: 700; color: var(--navy); }
+  .modal-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .modal-hero-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; margin-top: 22px;
+    padding: 18px; background: var(--bg); border-radius: 12px;
+  }
+  .modal-hero-val { font-size: 22px; font-weight: 700; }
+
+  .modal-field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; margin-top: 18px; }
+
+  .disclaimer {
+    margin-top: 20px; font-size: 12px; color: var(--muted); line-height: 1.6;
+    border-top: 1px solid var(--line); padding-top: 14px;
+  }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn-invest {
+    flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--navy);
+    color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+
+  .modal-glossary {
+    background: #fff; border-radius: 16px 16px 0 0; max-width: 480px; width: 100%;
+    padding: 24px 24px 32px; box-shadow: 0 -8px 30px rgba(11,31,58,0.15);
+  }
+  .sheet-handle { width: 36px; height: 4px; background: var(--line); border-radius: 2px; margin: 0 auto 20px; }
+  .glossary-title { margin: 0; color: var(--navy); font-size: 18px; font-weight: 700; }
+  .glossary-body { color: #374151; font-size: 14px; line-height: 1.6; margin-top: 12px; }
+  .glossary-why { margin-top: 16px; padding: 12px 14px; background: var(--bg); border-radius: 10px; border-left: 3px solid var(--slate); }
+  .glossary-why-label { font-size: 11px; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .glossary-why-body { margin: 0; font-size: 13px; color: #374151; line-height: 1.6; }
+  .btn-gotit {
+    margin-top: 20px; width: 100%; padding: 12px; border-radius: 10px; border: none;
+    background: var(--navy); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+
+  /* ---------- Profile screen ---------- */
+  .profile-wrap { max-width: 640px; margin: 0 auto; padding: 48px 0; }
+  .profile-wrap h1 { font-size: 26px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+  .profile-wrap > p { color: #4B5563; font-size: 14px; margin-bottom: 32px; }
+  .field-block { margin-bottom: 24px; }
+  .field-block-label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 10px; }
+  .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .radio-btn {
+    padding: 9px 14px; border-radius: 8px; font-size: 13px; cursor: pointer;
+    border: 1px solid var(--line); background: #fff; color: #374151; font-weight: 500;
+  }
+  .radio-btn.selected { border-color: var(--navy); background: var(--navy); color: #fff; font-weight: 600; }
+  .btn-submit {
+    margin-top: 12px; width: 100%; padding: 13px; border-radius: 10px; border: none;
+    background: #CBD2DB; color: #fff; font-size: 14px; font-weight: 600; cursor: not-allowed;
+  }
+  .btn-submit.enabled { background: var(--navy); cursor: pointer; }
+
+  /* ---------- Result screen ---------- */
+  .result-wrap { padding: 44px 0; }
+  .result-card {
+    max-width: 640px; margin: 0 auto 36px; background: #fff; border: 1px solid var(--line);
+    border-radius: 14px; padding: 26px; text-align: center;
+  }
+  .result-pretext { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .result-profile { font-size: 26px; font-weight: 800; color: var(--navy); }
+  .result-score { font-size: 13px; color: var(--slate); margin-top: 6px; }
+  .alloc-box { margin-top: 16px; padding: 12px 16px; background: var(--bg); border-radius: 10px; }
+  .alloc-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .alloc-value { font-size: 18px; font-weight: 700; color: var(--navy); margin-top: 4px; }
+  .result-disclaimer { font-size: 11.5px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
+
+  .rec-head-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
+  .rec-head-row h2 { font-size: 18px; font-weight: 700; color: var(--navy); margin: 0; }
+  .compare-link { font-size: 13px; font-weight: 600; color: var(--slate); background: none; border: none; cursor: pointer; }
+
+  /* ---------- Compare screen ---------- */
+  .compare-wrap { padding: 44px 0; }
+  .compare-wrap h1 { font-size: 24px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+  .compare-empty { padding: 80px 0; text-align: center; color: var(--muted); }
+  .compare-empty .t1 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+  .compare-empty .t2 { font-size: 13.5px; }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 32px; }
+  table { border-collapse: collapse; width: 100%; min-width: 480px; }
+  th, td { padding: 12px 14px; text-align: left; }
+  thead th {
+    font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
+    background: var(--bg); border-bottom: 1px solid var(--line);
+  }
+  thead th.issuer-col { font-size: 12.5px; font-weight: 700; color: var(--navy); min-width: 150px; }
+  .remove-btn { display: block; margin-top: 4px; font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 0; font-weight: 400; }
+  tbody td { font-size: 12.5px; border-bottom: 1px solid var(--line); }
+  tbody td.param-label { font-weight: 600; color: #374151; }
+  tbody td.data-cell { font-weight: 500; color: #1F2937; }
+  tbody td.data-cell.highlight { color: var(--green); font-weight: 700; }
+  .hl-tag { font-size: 10px; margin-left: 6px; color: var(--muted); font-weight: 500; }
+  tbody tr:nth-child(even) { background: var(--bg); }
+
+  .return-viz h2 { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .return-viz .hint-line { margin-bottom: 16px; }
+  .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .bar-label { width: 140px; font-size: 12px; color: #374151; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; background: var(--line); border-radius: 6px; height: 10px; position: relative; }
+  .bar-fill { background: var(--slate); height: 100%; border-radius: 6px; }
+  .bar-value { width: 56px; font-size: 12.5px; font-weight: 700; color: var(--navy); text-align: right; }
+
+  footer {
+    border-top: 1px solid var(--line); margin-top: 60px; padding: 24px 20px;
+    text-align: center; font-size: 11.5px; color: var(--muted);
+  }
+
+  /* ---------- Portfolio screen (reuses result/table/bar patterns) ---------- */
+  .portfolio-wrap { padding: 44px 0; }
+  .portfolio-wrap h1 { font-size: 24px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+  .portfolio-summary-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
+    margin-top: 20px; margin-bottom: 32px;
+  }
+  .summary-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .summary-card .alloc-label { margin-bottom: 6px; }
+  .summary-card .summary-value { font-size: 22px; font-weight: 800; color: var(--navy); }
+  .summary-card .summary-value.green { color: var(--green); }
+  .summary-card .summary-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .portfolio-section-title { font-size: 15px; font-weight: 700; color: var(--navy); margin: 0 0 4px; }
+
+  @media (max-width: 640px) {
+    table { font-size: 12px; }
+    .nav-links { display: none; }
+  }
+
+  /* ---------- Language selector ---------- */
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .lang-select {
+    font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--navy);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+    padding: 7px 10px; cursor: pointer;
+  }
+
+  /* ---------- Portfolio: manual entry + demat connect ---------- */
+  .portfolio-actions-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .btn-secondary {
+    padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line); background: #fff;
+    color: var(--navy); font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn-secondary.active { border-color: var(--navy); background: var(--navy); color: #fff; }
+  .btn-disabled-future {
+    padding: 9px 16px; border-radius: 8px; border: 1px dashed var(--line); background: #fff;
+    color: var(--muted); font-size: 13px; font-weight: 600; cursor: not-allowed;
+  }
+  .form-input-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .form-input-label { font-size: 12.5px; font-weight: 600; color: #374151; }
+  .form-input {
+    font-family: inherit; font-size: 13.5px; padding: 9px 11px; border: 1px solid var(--line);
+    border-radius: 8px; background: #fff; color: #1F2937; width: 100%;
+  }
+  .form-input:focus-visible { outline: 2px solid var(--slate); outline-offset: 1px; }
+  .manual-entry-block { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+  .manual-entry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  @media (max-width: 640px) { .manual-entry-grid { grid-template-columns: 1fr; } }
+  .manual-entry-subhead { font-size: 14px; font-weight: 700; color: var(--navy); margin: 0 0 12px; }
+  .holding-row-remove { font-size: 12px; color: #B3261E; background: none; border: none; cursor: pointer; font-weight: 600; padding: 0; margin-top: 2px; }
+  .btn-add-holding { font-size: 12.5px; font-weight: 600; color: var(--slate); background: none; border: 1px dashed var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; width: 100%; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-inner">
+    <div class="brand">BondScope</div>
+    <div class="nav-links" id="navLinks"></div>
+    <div class="nav-right">
+      <select class="lang-select" id="langSelect" onchange="setLang(this.value)">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="ta">தமிழ்</option>
+      </select>
+      <button class="nav-cta" id="navCta" onclick="setScreen('explore')">Explore Bonds</button>
+    </div>
+  </div>
+</div>
+
+<div class="container" id="screenRoot"></div>
+
+<!-- Bond Detail Modal -->
+<div class="overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="modal-detail" onclick="event.stopPropagation()" id="detailContent"></div>
+</div>
+
+<!-- Glossary Modal -->
+<div class="overlay bottom-sheet" id="glossaryOverlay" onclick="closeGlossary(event)">
+  <div class="modal-glossary" onclick="event.stopPropagation()" id="glossaryContent"></div>
+</div>
+
+<footer id="siteFooter">
+  BondScope is a prototype. All bond data is sample/illustrative. This is not investment advice. Bond investments are subject to issuer, market, liquidity and default risk.
+</footer>
+
+<script>
+/* ============================================================
+   BONDSCOPE — Retail Bond Investment Platform (HTML/vanilla JS)
+   Same tokens, logic and copy as the React version — port only
+   changes the rendering layer.
+   ============================================================ */
+
+const BONDS = [
+  { id: "b1", issuer: "Meridian Housing Finance Ltd.", type: "Corporate Bond", rating: "AAA", coupon: 9.25, ytm: 10.10, maturity: "2028-12-18", faceValue: 1000, minInvestment: 10000, frequency: "Quarterly", secured: "Secured", seniority: "Senior", risk: "Moderate", horizon: "3–5 years" },
+  { id: "b2", issuer: "Kaveri Infra Capital Ltd.", type: "Corporate Bond", rating: "AA+", coupon: 10.10, ytm: 11.35, maturity: "2027-03-05", faceValue: 1000, minInvestment: 25000, frequency: "Annual", secured: "Secured", seniority: "Senior", risk: "Moderate-High", horizon: "1–3 years" },
+  { id: "b3", issuer: "Government of India (G-Sec)", type: "Sovereign Bond", rating: "Sovereign", coupon: 7.10, ytm: 7.18, maturity: "2033-06-30", faceValue: 100, minInvestment: 10000, frequency: "Semi-Annual", secured: "Sovereign-backed", seniority: "N/A", risk: "Low", horizon: "5+ years" },
+  { id: "b4", issuer: "Sundar Retail Finance Pvt. Ltd.", type: "NCD", rating: "A", coupon: 11.50, ytm: 12.85, maturity: "2026-11-20", faceValue: 1000, minInvestment: 5000, frequency: "Monthly", secured: "Unsecured", seniority: "Subordinated", risk: "High", horizon: "<1 year" },
+  { id: "b5", issuer: "Coastal Power Transmission Ltd.", type: "Corporate Bond", rating: "AA", coupon: 8.75, ytm: 9.42, maturity: "2029-09-10", faceValue: 1000, minInvestment: 10000, frequency: "Quarterly", secured: "Secured", seniority: "Senior", risk: "Moderate", horizon: "5+ years" },
+  { id: "b6", issuer: "Nilgiri Municipal Bond Trust", type: "Municipal Bond", rating: "AA-", coupon: 8.10, ytm: 8.60, maturity: "2030-01-15", faceValue: 1000, minInvestment: 10000, frequency: "Semi-Annual", secured: "Secured", seniority: "Senior", risk: "Low-Moderate", horizon: "5+ years" },
+];
+
+/* ---------------- Portfolio sample holdings ----------------
+   Illustrative/sample data for the Personal Portfolio screen.
+   Equity holdings are separate from the BONDS catalog above
+   (which powers Explore/Compare); portfolio bond holdings
+   reference BONDS by issuer for consistency where applicable.
+------------------------------------------------------------ */
+const PORTFOLIO_EQUITY = [
+  { id: "e1", name: "HDFC Bank Ltd.", type: "Equity · Large Cap", units: 40, avgCost: 1450, currentPrice: 1642 },
+  { id: "e2", name: "Infosys Ltd.", type: "Equity · Large Cap", units: 25, avgCost: 1390, currentPrice: 1512 },
+  { id: "e3", name: "Tata Motors Ltd.", type: "Equity · Mid Cap", units: 60, avgCost: 620, currentPrice: 588 },
+  { id: "e4", name: "Nifty 50 Index Fund", type: "Equity Mutual Fund", units: 120, avgCost: 210, currentPrice: 248 },
+];
+
+const PORTFOLIO_DEBT = [
+  { id: "d1", name: "Meridian Housing Finance Ltd.", type: "Corporate Bond · AAA", units: 5, faceValue: 1000, invested: 51500, currentValue: 53400 },
+  { id: "d2", name: "Government of India (G-Sec)", type: "Sovereign Bond", units: 100, faceValue: 100, invested: 10000, currentValue: 10260 },
+  { id: "d3", name: "Coastal Power Transmission Ltd.", type: "Corporate Bond · AA", units: 10, faceValue: 1000, invested: 10000, currentValue: 10180 },
+  { id: "d4", name: "PPF (Public Provident Fund)", type: "Govt. Savings Scheme", units: 1, faceValue: null, invested: 45000, currentValue: 48375 },
+];
+
+
+
+/* ---------------- i18n ---------------- */
+let currentLang = "en";
+
+const T = {
+  en: {
+    nav_explore: "Explore Bonds",
+    nav_compare: "Compare",
+    nav_portfolio: "Portfolio",
+    nav_profile: "My Profile",
+    nav_cta: "Explore Bonds",
+
+    hero_eyebrow: "Fixed-Income Investing",
+    hero_h1_1: "Invest in Bonds.",
+    hero_h1_2: "Understand Your Returns.",
+    hero_p: "Explore fixed-income opportunities, understand the key parameters, and find bonds aligned with your investment profile.",
+    hero_cta: "Build Your Investor Profile →",
+
+    edu_h2: "Understanding the Bond Market",
+    edu1_t: "What is a bond?",
+    edu1_b: "A bond is a debt instrument. When you buy one, you're lending money to a company or government in exchange for periodic interest and repayment of principal at maturity.",
+    edu2_t: "How you earn returns",
+    edu2_b: "Returns typically come from periodic coupon payments plus any difference between your purchase price and the amount repaid at maturity.",
+    edu3_t: "Why issuers borrow",
+    edu3_b: "Companies and governments issue bonds to raise funds for operations, expansion or infrastructure, rather than raising equity or taking bank loans.",
+    edu4_t: "Coupon vs. actual return",
+    edu4_b: "The coupon is a fixed stated rate. Your actual return (YTM) also depends on the price you pay and the time remaining to maturity.",
+    edu5_t: "Why maturity matters",
+    edu5_b: "Longer maturities generally mean your money is locked in longer and may carry more interest-rate sensitivity.",
+    edu6_t: "Why credit quality matters",
+    edu6_b: "Credit rating reflects the issuer's ability to repay. Lower-rated issuers often offer higher yields to compensate for higher perceived risk.",
+
+    explore_h2: "Explore Bonds",
+    sample_tag: "Sample / illustrative data",
+    explore_hint: "Higher YTM does not automatically mean a better investment — consider credit quality, maturity and liquidity too.",
+
+    fld_ytm: "Yield to Maturity",
+    fld_coupon: "Coupon",
+    fld_maturity: "Maturity",
+    fld_maturity_date: "Maturity Date",
+    fld_min_inv: "Min. Investment",
+    fld_pay_freq: "Payment Frequency",
+    fld_face_value: "Face Value",
+    fld_secured: "Secured",
+    fld_secured_unsecured: "Secured / Unsecured",
+    fld_seniority: "Seniority",
+    fld_risk: "Risk Level",
+    fld_horizon: "Suggested Horizon",
+
+    btn_view_details: "View Bond Details",
+    btn_compare_add: "+ Compare",
+    btn_compare_active: "✓ Comparing",
+    learn_more: "Learn more",
+    why_suits: "Why this may suit you:",
+
+    profile_h1: "Build Your Investor Profile",
+    profile_p: "Tell us a little about yourself so we can identify investments that may better match your financial profile.",
+    lbl_age: "Age",
+    lbl_income: "Annual Income",
+    lbl_profession: "Profession",
+    lbl_horizon: "Investment Horizon",
+    lbl_experience: "Investment Experience",
+    lbl_scenario: "If your bond investment temporarily fell by 8%, what would you most likely do?",
+    opt_age_u30: "Under 30", opt_age_3045: "30–45", opt_age_4560: "45–60", opt_age_60p: "60+",
+    opt_inc_5: "Below ₹5L", opt_inc_510: "₹5–10L", opt_inc_1020: "₹10–20L", opt_inc_2050: "₹20–50L", opt_inc_50p: "₹50L+",
+    opt_prof_student: "Student", opt_prof_salaried: "Salaried Employee", opt_prof_business: "Business Owner",
+    opt_prof_self: "Self-employed", opt_prof_professional: "Professional", opt_prof_retired: "Retired", opt_prof_other: "Other",
+    opt_hzn_1: "< 1 year", opt_hzn_13: "1–3 years", opt_hzn_35: "3–5 years", opt_hzn_5p: "5+ years",
+    opt_exp_beginner: "Beginner", opt_exp_some: "Some experience", opt_exp_experienced: "Experienced",
+    opt_scn_sell: "A. Sell immediately", opt_scn_hold: "B. Hold and wait", opt_scn_more: "C. Consider investing more",
+    btn_see_risk: "See My Risk Profile",
+
+    result_pretext: "Based on the information provided, your indicative risk profile is",
+    result_score: "Score",
+    alloc_label: "Illustrative allocation range",
+    alloc_of: "of investable portfolio",
+    result_disclaimer: "This assessment is for educational and informational purposes and does not constitute investment advice or a guaranteed classification of your risk tolerance.",
+    rec_h2: "Bonds That May Match Your Profile",
+    compare_selected: "Compare",
+    compare_selected_arrow: "selected →",
+    profile_risk_averse: "Risk-Averse",
+    profile_risk_neutral: "Risk-Neutral",
+    profile_risk_tolerant: "Risk-Tolerant",
+    reason_template: "Your {profile} profile is broadly aligned with this bond's {risk} risk level and {horizon} horizon.",
+
+    compare_h1: "Compare Bonds",
+    compare_toggle_label: "Compare",
+    compare_bonds_only: "Bonds Only",
+    compare_vs_alt: "Bonds vs Other Instruments",
+    compare_hint_bonds: "YTM is only one factor. Consider credit quality, maturity, liquidity and your investment horizon before comparing bonds.",
+    compare_hint_alt: "Comparing bonds against Fixed Deposits, PPF and other fixed-income instruments. All figures are illustrative sample data. Interest/coupon rates are contractual where stated; indicative returns/yields are not guaranteed.",
+    compare_empty_t1: "No bonds selected for comparison",
+    compare_empty_t2: "Add bonds from Explore or your Recommendations to compare them side-by-side.",
+    compare_alt_empty_t1: "No instruments selected for comparison",
+    compare_alt_empty_t2: "Choose bonds and other fixed-income instruments above to compare them side-by-side.",
+    compare_add_instruments: "Add instruments to compare",
+    remove_btn: "Remove",
+    highest_in_set: "highest in set",
+    return_viz_h2: "Potential Annualised Return",
+    return_viz_hint: "Indicative YTM shown for reference only — not a projection of guaranteed returns.",
+    return_viz_alt_h2: "Indicative Return / Yield Comparison",
+    return_viz_alt_hint: "Rates shown are illustrative sample data. Fixed Deposit and PPF rates shown are contractual; bond figures are indicative yield (YTM), not guaranteed. Actual returns may vary and are not guaranteed unless explicitly stated as a contractual rate.",
+
+    row_issuer: "Issuer", row_rating: "Credit Rating", row_coupon: "Coupon", row_ytm: "YTM",
+    row_maturity: "Maturity", row_min_inv: "Minimum Investment", row_freq: "Interest Frequency",
+    row_secured: "Secured/Unsecured", row_risk: "Risk Level", row_horizon: "Investment Horizon",
+    row_instrument_type: "Instrument Type", row_rate: "Interest / Coupon Rate", row_return: "Indicative Return / Yield",
+    row_tenure: "Tenure / Maturity", row_liquidity: "Liquidity", row_tax: "Tax Treatment",
+
+    modal_continue_invest: "Continue to Invest",
+    modal_add_compare: "Add to Compare",
+    modal_in_compare: "✓ In Compare",
+    modal_disclaimer: "Sample / illustrative data. Indicative yield only — subject to issuer, market, liquidity and default risk. Not a guaranteed return.",
+
+    glossary_why: "Why it matters",
+    glossary_example: "Example",
+    glossary_got_it: "Got it",
+
+    portfolio_h1: "My Portfolio",
+    portfolio_hint: "A consolidated, illustrative view of your equity and debt holdings. Sample / illustrative data for demonstration purposes only.",
+    portfolio_total_value: "Total Portfolio Value",
+    portfolio_invested: "Invested",
+    portfolio_returns: "Returns / Gain-Loss",
+    portfolio_return_pct: "Return %",
+    portfolio_equity_inv: "Equity Investments",
+    portfolio_debt_inv: "Debt / Bond Investments",
+    portfolio_of_portfolio: "of portfolio",
+    portfolio_alloc_h2: "Equity vs Debt Allocation",
+    portfolio_alloc_hint: "Based on current value of holdings.",
+    bar_equity: "Equity",
+    bar_debt: "Debt / Bonds",
+    portfolio_equity_h2: "Equity Holdings",
+    portfolio_equity_hint: "Individual equity and equity mutual fund positions.",
+    portfolio_debt_h2: "Debt / Bond Holdings",
+    portfolio_debt_hint: "Individual bond and fixed-income positions.",
+    th_holding: "Holding", th_units: "Units", th_invested: "Invested Amount", th_current: "Current Value", th_returns: "Returns / Gain-Loss",
+    lump_sum: "Lump sum",
+    portfolio_disclaimer: "Portfolio values shown are sample/illustrative data for demonstration purposes only and do not reflect real holdings or market prices. This is not investment advice.",
+
+    btn_connect_demat: "Connect Demat Account (Coming Soon)",
+    btn_manual_entry: "Enter Holdings Manually",
+    btn_sample_view: "View Sample Portfolio",
+    demat_note: "Connecting a real demat/broker account will require secure, authorized access through your broker's or wealth-data provider's API. This is a placeholder for a future integration — no real account is connected in this prototype.",
+
+    manual_h2: "Enter Your Portfolio",
+    manual_hint: "Add your holdings below. Totals and allocation are calculated automatically as you type.",
+    manual_equity_subhead: "Equity Holding",
+    manual_debt_subhead: "Debt / Bond Holding",
+    lbl_stock_name: "Stock / Investment Name",
+    lbl_quantity: "Quantity",
+    lbl_purchase_value: "Purchase / Invested Value (₹)",
+    lbl_current_value: "Current Value (₹)",
+    lbl_bond_name: "Bond / Instrument Name",
+    lbl_invested_amount: "Investment Amount (₹)",
+    lbl_coupon_rate: "Coupon / Interest Rate (%)",
+    lbl_ytm_optional: "YTM (%) — where applicable",
+    lbl_maturity_date: "Maturity Date",
+    btn_add_equity: "+ Add Equity Holding",
+    btn_add_debt: "+ Add Debt Holding",
+    manual_no_equity: "No equity holdings added yet.",
+    manual_no_debt: "No debt holdings added yet.",
+    manual_your_summary: "Your Portfolio Summary",
+
+    footer_text: "BondScope is a prototype. All bond data is sample/illustrative. This is not investment advice. Bond investments are subject to issuer, market, liquidity and default risk.",
+  },
+
+  hi: {
+    nav_explore: "बॉन्ड देखें",
+    nav_compare: "तुलना करें (Compare)",
+    nav_portfolio: "पोर्टफोलियो (Portfolio)",
+    nav_profile: "मेरी प्रोफाइल",
+    nav_cta: "बॉन्ड देखें",
+
+    hero_eyebrow: "फिक्स्ड-इनकम निवेश (Fixed-Income Investing)",
+    hero_h1_1: "बॉन्ड में निवेश करें।",
+    hero_h1_2: "अपने रिटर्न को समझें।",
+    hero_p: "फिक्स्ड-इनकम अवसरों को देखें, मुख्य पैरामीटर समझें, और अपनी निवेश प्रोफाइल से मेल खाने वाले बॉन्ड खोजें।",
+    hero_cta: "अपनी निवेशक प्रोफाइल बनाएं →",
+
+    edu_h2: "बॉन्ड मार्केट को समझना",
+    edu1_t: "बॉन्ड क्या है?",
+    edu1_b: "बॉन्ड एक ऋण साधन (debt instrument) है। जब आप इसे खरीदते हैं, तो आप किसी कंपनी या सरकार को पैसा उधार देते हैं, बदले में समय-समय पर ब्याज (interest) और मैच्योरिटी पर मूलधन (principal) की वापसी मिलती है।",
+    edu2_t: "आपको रिटर्न कैसे मिलता है",
+    edu2_b: "रिटर्न आमतौर पर नियमित कूपन (coupon) भुगतान से, और आपकी खरीद कीमत तथा मैच्योरिटी पर चुकाई गई राशि के अंतर से मिलता है।",
+    edu3_t: "जारीकर्ता (issuer) उधार क्यों लेते हैं",
+    edu3_b: "कंपनियां और सरकारें संचालन, विस्तार या इंफ्रास्ट्रक्चर के लिए फंड जुटाने के लिए बॉन्ड जारी करती हैं, बजाय इक्विटी बढ़ाने या बैंक लोन लेने के।",
+    edu4_t: "कूपन बनाम वास्तविक रिटर्न",
+    edu4_b: "कूपन एक तय दर होती है। आपका वास्तविक रिटर्न (YTM) आपकी खरीद कीमत और मैच्योरिटी तक बचे समय पर भी निर्भर करता है।",
+    edu5_t: "मैच्योरिटी क्यों महत्वपूर्ण है",
+    edu5_b: "लंबी मैच्योरिटी का मतलब है कि आपका पैसा अधिक समय तक लॉक रहता है और ब्याज दर में बदलाव का असर ज़्यादा हो सकता है।",
+    edu6_t: "क्रेडिट क्वालिटी क्यों मायने रखती है",
+    edu6_b: "क्रेडिट रेटिंग जारीकर्ता की चुकाने की क्षमता दर्शाती है। कम रेटिंग वाले जारीकर्ता अक्सर अधिक जोखिम की भरपाई के लिए ज़्यादा यील्ड देते हैं।",
+
+    explore_h2: "बॉन्ड देखें",
+    sample_tag: "नमूना / उदाहरण डेटा (Sample data)",
+    explore_hint: "अधिक YTM का मतलब हमेशा बेहतर निवेश नहीं होता — क्रेडिट क्वालिटी, मैच्योरिटी और तरलता (liquidity) पर भी विचार करें।",
+
+    fld_ytm: "यील्ड टू मैच्योरिटी (YTM)",
+    fld_coupon: "कूपन (Coupon)",
+    fld_maturity: "मैच्योरिटी",
+    fld_maturity_date: "मैच्योरिटी तिथि",
+    fld_min_inv: "न्यूनतम निवेश",
+    fld_pay_freq: "भुगतान आवृत्ति (Payment Frequency)",
+    fld_face_value: "फेस वैल्यू (Face Value)",
+    fld_secured: "सुरक्षित (Secured)",
+    fld_secured_unsecured: "सुरक्षित / असुरक्षित",
+    fld_seniority: "वरिष्ठता (Seniority)",
+    fld_risk: "जोखिम स्तर",
+    fld_horizon: "सुझाई गई अवधि",
+
+    btn_view_details: "बॉन्ड विवरण देखें",
+    btn_compare_add: "+ तुलना करें",
+    btn_compare_active: "✓ तुलना में",
+    learn_more: "अधिक जानें",
+    why_suits: "यह आपके लिए उपयुक्त क्यों हो सकता है:",
+
+    profile_h1: "अपनी निवेशक प्रोफाइल बनाएं",
+    profile_p: "हमें अपने बारे में थोड़ा बताएं ताकि हम आपकी वित्तीय प्रोफाइल से बेहतर मेल खाने वाले निवेश पहचान सकें।",
+    lbl_age: "आयु",
+    lbl_income: "वार्षिक आय",
+    lbl_profession: "पेशा",
+    lbl_horizon: "निवेश अवधि",
+    lbl_experience: "निवेश अनुभव",
+    lbl_scenario: "यदि आपका बॉन्ड निवेश अस्थायी रूप से 8% गिर जाए, तो आप सबसे अधिक संभावना क्या करेंगे?",
+    opt_age_u30: "30 से कम", opt_age_3045: "30–45", opt_age_4560: "45–60", opt_age_60p: "60+",
+    opt_inc_5: "₹5L से कम", opt_inc_510: "₹5–10L", opt_inc_1020: "₹10–20L", opt_inc_2050: "₹20–50L", opt_inc_50p: "₹50L+",
+    opt_prof_student: "छात्र", opt_prof_salaried: "वेतनभोगी कर्मचारी", opt_prof_business: "व्यवसाय स्वामी",
+    opt_prof_self: "स्वरोजगार", opt_prof_professional: "पेशेवर", opt_prof_retired: "सेवानिवृत्त", opt_prof_other: "अन्य",
+    opt_hzn_1: "< 1 वर्ष", opt_hzn_13: "1–3 वर्ष", opt_hzn_35: "3–5 वर्ष", opt_hzn_5p: "5+ वर्ष",
+    opt_exp_beginner: "शुरुआती (Beginner)", opt_exp_some: "कुछ अनुभव", opt_exp_experienced: "अनुभवी",
+    opt_scn_sell: "A. तुरंत बेच देंगे", opt_scn_hold: "B. रोके रखेंगे और इंतज़ार करेंगे", opt_scn_more: "C. और निवेश करने पर विचार करेंगे",
+    btn_see_risk: "मेरी जोखिम प्रोफाइल देखें",
+
+    result_pretext: "दी गई जानकारी के आधार पर, आपकी अनुमानित जोखिम प्रोफाइल है",
+    result_score: "स्कोर",
+    alloc_label: "अनुमानित आवंटन सीमा (Illustrative allocation range)",
+    alloc_of: "निवेश योग्य पोर्टफोलियो का",
+    result_disclaimer: "यह आकलन केवल शैक्षिक और सूचनात्मक उद्देश्यों के लिए है और यह निवेश सलाह या आपकी जोखिम सहनशीलता का गारंटीशुदा वर्गीकरण नहीं है।",
+    rec_h2: "बॉन्ड जो आपकी प्रोफाइल से मेल खा सकते हैं",
+    compare_selected: "तुलना करें",
+    compare_selected_arrow: "चयनित →",
+    profile_risk_averse: "जोखिम-विमुख (Risk-Averse)",
+    profile_risk_neutral: "जोखिम-तटस्थ (Risk-Neutral)",
+    profile_risk_tolerant: "जोखिम-सहनशील (Risk-Tolerant)",
+    reason_template: "आपकी {profile} प्रोफाइल इस बॉन्ड के {risk} जोखिम स्तर और {horizon} अवधि से काफ़ी हद तक मेल खाती है।",
+
+    compare_h1: "बॉन्ड की तुलना करें",
+    compare_toggle_label: "तुलना करें",
+    compare_bonds_only: "केवल बॉन्ड",
+    compare_vs_alt: "बॉन्ड बनाम अन्य साधन",
+    compare_hint_bonds: "YTM केवल एक कारक है। बॉन्ड की तुलना करने से पहले क्रेडिट क्वालिटी, मैच्योरिटी, तरलता और अपनी निवेश अवधि पर भी विचार करें।",
+    compare_hint_alt: "बॉन्ड की तुलना फिक्स्ड डिपॉज़िट (FD), PPF और अन्य फिक्स्ड-इनकम साधनों से की जा रही है। सभी आंकड़े उदाहरण/नमूना डेटा हैं। जहां बताया गया है वहां ब्याज/कूपन दरें संविदात्मक (contractual) हैं; अनुमानित रिटर्न/यील्ड की गारंटी नहीं है।",
+    compare_empty_t1: "तुलना के लिए कोई बॉन्ड चयनित नहीं",
+    compare_empty_t2: "उन्हें साथ-साथ तुलना करने के लिए Explore या अपनी सिफारिशों से बॉन्ड जोड़ें।",
+    compare_alt_empty_t1: "तुलना के लिए कोई साधन चयनित नहीं",
+    compare_alt_empty_t2: "उन्हें साथ-साथ तुलना करने के लिए ऊपर से बॉन्ड और अन्य फिक्स्ड-इनकम साधन चुनें।",
+    compare_add_instruments: "तुलना के लिए साधन जोड़ें",
+    remove_btn: "हटाएं",
+    highest_in_set: "इस समूह में सबसे अधिक",
+    return_viz_h2: "संभावित वार्षिक रिटर्न (Annualised Return)",
+    return_viz_hint: "अनुमानित YTM केवल संदर्भ के लिए दिखाया गया है — यह गारंटीशुदा रिटर्न का अनुमान नहीं है।",
+    return_viz_alt_h2: "अनुमानित रिटर्न / यील्ड तुलना",
+    return_viz_alt_hint: "दिखाई गई दरें उदाहरण डेटा हैं। फिक्स्ड डिपॉज़िट और PPF की दरें संविदात्मक हैं; बॉन्ड के आंकड़े अनुमानित यील्ड (YTM) हैं, गारंटीशुदा नहीं। वास्तविक रिटर्न भिन्न हो सकता है और तब तक गारंटीशुदा नहीं है जब तक स्पष्ट रूप से संविदात्मक दर के रूप में न बताया गया हो।",
+
+    row_issuer: "जारीकर्ता (Issuer)", row_rating: "क्रेडिट रेटिंग", row_coupon: "कूपन", row_ytm: "YTM",
+    row_maturity: "मैच्योरिटी", row_min_inv: "न्यूनतम निवेश", row_freq: "ब्याज आवृत्ति",
+    row_secured: "सुरक्षित/असुरक्षित", row_risk: "जोखिम स्तर", row_horizon: "निवेश अवधि",
+    row_instrument_type: "साधन प्रकार", row_rate: "ब्याज / कूपन दर", row_return: "अनुमानित रिटर्न / यील्ड",
+    row_tenure: "अवधि / मैच्योरिटी", row_liquidity: "तरलता (Liquidity)", row_tax: "कर उपचार (Tax Treatment)",
+
+    modal_continue_invest: "निवेश जारी रखें",
+    modal_add_compare: "तुलना में जोड़ें",
+    modal_in_compare: "✓ तुलना में शामिल",
+    modal_disclaimer: "नमूना / उदाहरण डेटा। केवल अनुमानित यील्ड — जारीकर्ता, बाज़ार, तरलता और डिफ़ॉल्ट जोखिम के अधीन। गारंटीशुदा रिटर्न नहीं।",
+
+    glossary_why: "यह क्यों मायने रखता है",
+    glossary_example: "उदाहरण",
+    glossary_got_it: "समझ गया",
+
+    portfolio_h1: "मेरा पोर्टफोलियो",
+    portfolio_hint: "आपके इक्विटी और डेट होल्डिंग्स का एक समेकित, उदाहरण दृश्य। केवल प्रदर्शन उद्देश्यों के लिए नमूना डेटा।",
+    portfolio_total_value: "कुल पोर्टफोलियो मूल्य",
+    portfolio_invested: "निवेशित",
+    portfolio_returns: "रिटर्न / लाभ-हानि (Gain-Loss)",
+    portfolio_return_pct: "रिटर्न %",
+    portfolio_equity_inv: "इक्विटी निवेश",
+    portfolio_debt_inv: "डेट / बॉन्ड निवेश",
+    portfolio_of_portfolio: "पोर्टफोलियो का",
+    portfolio_alloc_h2: "इक्विटी बनाम डेट आवंटन",
+    portfolio_alloc_hint: "होल्डिंग्स के वर्तमान मूल्य पर आधारित।",
+    bar_equity: "इक्विटी",
+    bar_debt: "डेट / बॉन्ड",
+    portfolio_equity_h2: "इक्विटी होल्डिंग्स",
+    portfolio_equity_hint: "व्यक्तिगत इक्विटी और इक्विटी म्यूचुअल फंड पोज़िशन।",
+    portfolio_debt_h2: "डेट / बॉन्ड होल्डिंग्स",
+    portfolio_debt_hint: "व्यक्तिगत बॉन्ड और फिक्स्ड-इनकम पोज़िशन।",
+    th_holding: "होल्डिंग", th_units: "यूनिट्स", th_invested: "निवेशित राशि", th_current: "वर्तमान मूल्य", th_returns: "रिटर्न / लाभ-हानि",
+    lump_sum: "एकमुश्त (Lump sum)",
+    portfolio_disclaimer: "दिखाए गए पोर्टफोलियो मूल्य केवल प्रदर्शन उद्देश्यों के लिए नमूना/उदाहरण डेटा हैं और वास्तविक होल्डिंग्स या बाज़ार कीमतों को नहीं दर्शाते। यह निवेश सलाह नहीं है।",
+
+    btn_connect_demat: "डीमैट खाता जोड़ें (जल्द आ रहा है)",
+    btn_manual_entry: "होल्डिंग्स मैन्युअल रूप से दर्ज करें",
+    btn_sample_view: "नमूना पोर्टफोलियो देखें",
+    demat_note: "एक वास्तविक डीमैट/ब्रोकर खाता जोड़ने के लिए आपके ब्रोकर या वेल्थ-डेटा प्रदाता के API के माध्यम से सुरक्षित, अधिकृत एक्सेस की आवश्यकता होगी। यह भविष्य के इंटीग्रेशन के लिए एक प्लेसहोल्डर है — इस प्रोटोटाइप में कोई वास्तविक खाता जुड़ा नहीं है।",
+
+    manual_h2: "अपना पोर्टफोलियो दर्ज करें",
+    manual_hint: "नीचे अपनी होल्डिंग्स जोड़ें। टाइप करते ही कुल और आवंटन अपने आप गणना हो जाएगा।",
+    manual_equity_subhead: "इक्विटी होल्डिंग",
+    manual_debt_subhead: "डेट / बॉन्ड होल्डिंग",
+    lbl_stock_name: "स्टॉक / निवेश का नाम",
+    lbl_quantity: "मात्रा (Quantity)",
+    lbl_purchase_value: "खरीद / निवेशित मूल्य (₹)",
+    lbl_current_value: "वर्तमान मूल्य (₹)",
+    lbl_bond_name: "बॉन्ड / साधन का नाम",
+    lbl_invested_amount: "निवेश राशि (₹)",
+    lbl_coupon_rate: "कूपन / ब्याज दर (%)",
+    lbl_ytm_optional: "YTM (%) — जहां लागू हो",
+    lbl_maturity_date: "मैच्योरिटी तिथि",
+    btn_add_equity: "+ इक्विटी होल्डिंग जोड़ें",
+    btn_add_debt: "+ डेट होल्डिंग जोड़ें",
+    manual_no_equity: "अभी तक कोई इक्विटी होल्डिंग नहीं जोड़ी गई।",
+    manual_no_debt: "अभी तक कोई डेट होल्डिंग नहीं जोड़ी गई।",
+    manual_your_summary: "आपका पोर्टफोलियो सारांश",
+
+    footer_text: "BondScope एक प्रोटोटाइप है। सभी बॉन्ड डेटा नमूना/उदाहरण है। यह निवेश सलाह नहीं है। बॉन्ड निवेश जारीकर्ता, बाज़ार, तरलता और डिफ़ॉल्ट जोखिम के अधीन हैं।",
+  },
+
+  ta: {
+    nav_explore: "பத்திரங்களை ஆராயுங்கள்",
+    nav_compare: "ஒப்பிடுக (Compare)",
+    nav_portfolio: "போர்ட்ஃபோலியோ (Portfolio)",
+    nav_profile: "எனது சுயவிவரம்",
+    nav_cta: "பத்திரங்களை ஆராயுங்கள்",
+
+    hero_eyebrow: "நிலையான-வருமான முதலீடு (Fixed-Income Investing)",
+    hero_h1_1: "பத்திரங்களில் முதலீடு செய்யுங்கள்.",
+    hero_h1_2: "உங்கள் வருமானத்தைப் புரிந்துகொள்ளுங்கள்.",
+    hero_p: "நிலையான-வருமான வாய்ப்புகளை ஆராயுங்கள், முக்கிய அளவுருக்களைப் புரிந்துகொள்ளுங்கள், உங்கள் முதலீட்டு சுயவிவரத்திற்கு ஏற்ற பத்திரங்களைக் கண்டறியுங்கள்.",
+    hero_cta: "உங்கள் முதலீட்டாளர் சுயவிவரத்தை உருவாக்குங்கள் →",
+
+    edu_h2: "பத்திர சந்தையைப் புரிந்துகொள்ளுதல்",
+    edu1_t: "பத்திரம் (Bond) என்றால் என்ன?",
+    edu1_b: "பத்திரம் ஒரு கடன் கருவி (debt instrument). நீங்கள் ஒன்றை வாங்கும்போது, ஒரு நிறுவனத்திற்கோ அரசாங்கத்திற்கோ பணத்தை கடனாகக் கொடுக்கிறீர்கள்; பதிலுக்கு அவ்வப்போது வட்டியும் (interest), முதிர்வு (maturity) தேதியில் அசல் தொகையும் திரும்பக் கிடைக்கும்.",
+    edu2_t: "நீங்கள் எப்படி வருமானம் பெறுகிறீர்கள்",
+    edu2_b: "வருமானம் பொதுவாக அவ்வப்போது கிடைக்கும் கூப்பன் (coupon) பணம் மற்றும் உங்கள் வாங்கிய விலைக்கும் முதிர்வில் திரும்பச் செலுத்தப்படும் தொகைக்கும் இடையிலான வித்தியாசத்திலிருந்து வருகிறது.",
+    edu3_t: "வழங்குபவர்கள் (issuers) ஏன் கடன் வாங்குகிறார்கள்",
+    edu3_b: "நிறுவனங்களும் அரசாங்கங்களும் செயல்பாடுகள், விரிவாக்கம் அல்லது உள்கட்டமைப்புக்காக நிதி திரட்ட, ஈக்விட்டி அல்லது வங்கிக் கடன் வாங்குவதற்குப் பதிலாக பத்திரங்களை வழங்குகின்றன.",
+    edu4_t: "கூப்பன் Vs உண்மையான வருமானம்",
+    edu4_b: "கூப்பன் என்பது நிலையான குறிப்பிட்ட விகிதம். உங்கள் உண்மையான வருமானம் (YTM) நீங்கள் செலுத்தும் விலை மற்றும் முதிர்விற்கு எஞ்சியிருக்கும் காலத்தையும் பொறுத்தது.",
+    edu5_t: "முதிர்வு (Maturity) ஏன் முக்கியம்",
+    edu5_b: "நீண்ட முதிர்வு காலம் என்பது உங்கள் பணம் நீண்ட காலம் பூட்டப்பட்டிருக்கும் என்றும், வட்டி வீத மாற்றங்களால் அதிக பாதிப்பு ஏற்படலாம் என்றும் பொருள்.",
+    edu6_t: "கடன் தரம் (Credit Quality) ஏன் முக்கியம்",
+    edu6_b: "கடன் மதிப்பீடு (credit rating) வழங்குபவரின் திருப்பிச் செலுத்தும் திறனைக் காட்டுகிறது. குறைந்த மதிப்பீடு உள்ளவர்கள் அதிக அபாயத்தை ஈடுசெய்ய அதிக வருமானம் தரலாம்.",
+
+    explore_h2: "பத்திரங்களை ஆராயுங்கள்",
+    sample_tag: "மாதிரி / உதாரண தரவு (Sample data)",
+    explore_hint: "அதிக YTM என்பது எப்போதும் சிறந்த முதலீடு என்று அர்த்தமல்ல — கடன் தரம், முதிர்வு மற்றும் பணமாக்கும் திறனையும் (liquidity) கருத்தில் கொள்ளுங்கள்.",
+
+    fld_ytm: "முதிர்வு வருமானம் (YTM)",
+    fld_coupon: "கூப்பன் (Coupon)",
+    fld_maturity: "முதிர்வு",
+    fld_maturity_date: "முதிர்வு தேதி",
+    fld_min_inv: "குறைந்தபட்ச முதலீடு",
+    fld_pay_freq: "கட்டண அதிர்வெண் (Payment Frequency)",
+    fld_face_value: "முக மதிப்பு (Face Value)",
+    fld_secured: "பாதுகாக்கப்பட்டது (Secured)",
+    fld_secured_unsecured: "பாதுகாக்கப்பட்டது / பாதுகாக்கப்படாதது",
+    fld_seniority: "முன்னுரிமை (Seniority)",
+    fld_risk: "அபாய நிலை",
+    fld_horizon: "பரிந்துரைக்கப்பட்ட காலம்",
+
+    btn_view_details: "பத்திர விவரங்களைக் காண்க",
+    btn_compare_add: "+ ஒப்பிடுக",
+    btn_compare_active: "✓ ஒப்பிடப்படுகிறது",
+    learn_more: "மேலும் அறிக",
+    why_suits: "இது உங்களுக்கு ஏன் ஏற்றதாக இருக்கலாம்:",
+
+    profile_h1: "உங்கள் முதலீட்டாளர் சுயவிவரத்தை உருவாக்குங்கள்",
+    profile_p: "உங்கள் நிதி சுயவிவரத்திற்கு பொருந்தக்கூடிய முதலீடுகளை நாங்கள் அடையாளம் காண, உங்களைப் பற்றி சிறிது கூறுங்கள்.",
+    lbl_age: "வயது",
+    lbl_income: "ஆண்டு வருமானம்",
+    lbl_profession: "தொழில்",
+    lbl_horizon: "முதலீட்டு காலம்",
+    lbl_experience: "முதலீட்டு அனுபவம்",
+    lbl_scenario: "உங்கள் பத்திர முதலீடு தற்காலிகமாக 8% குறைந்தால், நீங்கள் என்ன செய்வீர்கள்?",
+    opt_age_u30: "30க்கு கீழ்", opt_age_3045: "30–45", opt_age_4560: "45–60", opt_age_60p: "60+",
+    opt_inc_5: "₹5L க்கு கீழ்", opt_inc_510: "₹5–10L", opt_inc_1020: "₹10–20L", opt_inc_2050: "₹20–50L", opt_inc_50p: "₹50L+",
+    opt_prof_student: "மாணவர்", opt_prof_salaried: "சம்பள ஊழியர்", opt_prof_business: "வணிக உரிமையாளர்",
+    opt_prof_self: "சுயதொழில்", opt_prof_professional: "தொழில்முறை நிபுணர்", opt_prof_retired: "ஓய்வுபெற்றவர்", opt_prof_other: "மற்றவை",
+    opt_hzn_1: "< 1 ஆண்டு", opt_hzn_13: "1–3 ஆண்டுகள்", opt_hzn_35: "3–5 ஆண்டுகள்", opt_hzn_5p: "5+ ஆண்டுகள்",
+    opt_exp_beginner: "தொடக்க நிலை", opt_exp_some: "சிறிது அனுபவம்", opt_exp_experienced: "அனுபவம் வாய்ந்தவர்",
+    opt_scn_sell: "A. உடனடியாக விற்பேன்", opt_scn_hold: "B. வைத்திருந்து காத்திருப்பேன்", opt_scn_more: "C. மேலும் முதலீடு செய்ய யோசிப்பேன்",
+    btn_see_risk: "எனது அபாய சுயவிவரத்தைக் காண்க",
+
+    result_pretext: "வழங்கப்பட்ட தகவலின் அடிப்படையில், உங்கள் ஏறத்தாழ அபாய சுயவிவரம்",
+    result_score: "மதிப்பெண்",
+    alloc_label: "உதாரண ஒதுக்கீடு வரம்பு (Illustrative allocation range)",
+    alloc_of: "முதலீடு செய்யக்கூடிய போர்ட்ஃபோலியோவில்",
+    result_disclaimer: "இந்த மதிப்பீடு கல்வி மற்றும் தகவல் நோக்கங்களுக்காக மட்டுமே, மேலும் இது முதலீட்டு ஆலோசனை அல்லது உங்கள் அபாய சகிப்புத்தன்மையின் உத்தரவாதமான வகைப்பாடு அல்ல.",
+    rec_h2: "உங்கள் சுயவிவரத்திற்குப் பொருந்தக்கூடிய பத்திரங்கள்",
+    compare_selected: "ஒப்பிடுக",
+    compare_selected_arrow: "தேர்ந்தெடுக்கப்பட்டவை →",
+    profile_risk_averse: "அபாயம் தவிர்ப்பவர் (Risk-Averse)",
+    profile_risk_neutral: "அபாய-நடுநிலை (Risk-Neutral)",
+    profile_risk_tolerant: "அபாயம் ஏற்பவர் (Risk-Tolerant)",
+    reason_template: "உங்கள் {profile} சுயவிவரம் இந்த பத்திரத்தின் {risk} அபாய நிலை மற்றும் {horizon} காலத்துடன் பெருமளவில் பொருந்துகிறது.",
+
+    compare_h1: "பத்திரங்களை ஒப்பிடுக",
+    compare_toggle_label: "ஒப்பிடுக",
+    compare_bonds_only: "பத்திரங்கள் மட்டும்",
+    compare_vs_alt: "பத்திரங்கள் Vs பிற கருவிகள்",
+    compare_hint_bonds: "YTM என்பது ஒரு காரணி மட்டுமே. பத்திரங்களை ஒப்பிடுவதற்கு முன் கடன் தரம், முதிர்வு, பணமாக்கும் திறன் மற்றும் உங்கள் முதலீட்டு காலத்தையும் கருத்தில் கொள்ளுங்கள்.",
+    compare_hint_alt: "பத்திரங்கள் நிலையான வைப்பு (FD), PPF மற்றும் பிற நிலையான-வருமான கருவிகளுடன் ஒப்பிடப்படுகின்றன. அனைத்து புள்ளிவிவரங்களும் உதாரண தரவு. குறிப்பிடப்பட்ட இடங்களில் வட்டி/கூப்பன் விகிதங்கள் ஒப்பந்த அடிப்படையிலானவை; உதாரண வருமானம்/வருவாய் உத்தரவாதம் அளிக்கப்படவில்லை.",
+    compare_empty_t1: "ஒப்பிடுவதற்கு எந்த பத்திரமும் தேர்ந்தெடுக்கப்படவில்லை",
+    compare_empty_t2: "பக்கத்திற்குப் பக்கம் ஒப்பிட Explore அல்லது உங்கள் பரிந்துரைகளில் இருந்து பத்திரங்களைச் சேர்க்கவும்.",
+    compare_alt_empty_t1: "ஒப்பிடுவதற்கு எந்த கருவியும் தேர்ந்தெடுக்கப்படவில்லை",
+    compare_alt_empty_t2: "பக்கத்திற்குப் பக்கம் ஒப்பிட மேலே உள்ள பத்திரங்கள் மற்றும் பிற நிலையான-வருமான கருவிகளைத் தேர்ந்தெடுக்கவும்.",
+    compare_add_instruments: "ஒப்பிடுவதற்கு கருவிகளைச் சேர்க்கவும்",
+    remove_btn: "நீக்கு",
+    highest_in_set: "இந்த குழுவில் அதிகபட்சம்",
+    return_viz_h2: "சாத்தியமான ஆண்டு வருமானம் (Annualised Return)",
+    return_viz_hint: "உதாரண YTM குறிப்புக்காக மட்டுமே காட்டப்படுகிறது — இது உத்தரவாதமான வருமானத்தின் கணிப்பு அல்ல.",
+    return_viz_alt_h2: "உதாரண வருமானம் / வருவாய் ஒப்பீடு",
+    return_viz_alt_hint: "காட்டப்பட்டுள்ள விகிதங்கள் உதாரண தரவு. நிலையான வைப்பு மற்றும் PPF விகிதங்கள் ஒப்பந்த அடிப்படையிலானவை; பத்திர புள்ளிவிவரங்கள் உதாரண வருவாய் (YTM), உத்தரவாதம் இல்லை. உண்மையான வருமானம் மாறுபடலாம், ஒப்பந்த விகிதமாக தெளிவாகக் கூறப்படாத வரை உத்தரவாதம் இல்லை.",
+
+    row_issuer: "வழங்குபவர் (Issuer)", row_rating: "கடன் மதிப்பீடு", row_coupon: "கூப்பன்", row_ytm: "YTM",
+    row_maturity: "முதிர்வு", row_min_inv: "குறைந்தபட்ச முதலீடு", row_freq: "வட்டி அதிர்வெண்",
+    row_secured: "பாதுகாக்கப்பட்டது/இல்லை", row_risk: "அபாய நிலை", row_horizon: "முதலீட்டு காலம்",
+    row_instrument_type: "கருவி வகை", row_rate: "வட்டி / கூப்பன் விகிதம்", row_return: "உதாரண வருமானம் / வருவாய்",
+    row_tenure: "காலம் / முதிர்வு", row_liquidity: "பணமாக்கும் திறன் (Liquidity)", row_tax: "வரி நடைமுறை (Tax Treatment)",
+
+    modal_continue_invest: "முதலீட்டைத் தொடரவும்",
+    modal_add_compare: "ஒப்பீட்டில் சேர்க்கவும்",
+    modal_in_compare: "✓ ஒப்பீட்டில் உள்ளது",
+    modal_disclaimer: "மாதிரி / உதாரண தரவு. உதாரண வருவாய் மட்டும் — வழங்குபவர், சந்தை, பணமாக்கும் திறன் மற்றும் தவறுதல் அபாயத்திற்கு உட்பட்டது. உத்தரவாதமான வருமானம் அல்ல.",
+
+    glossary_why: "இது ஏன் முக்கியம்",
+    glossary_example: "உதாரணம்",
+    glossary_got_it: "புரிந்தது",
+
+    portfolio_h1: "எனது போர்ட்ஃபோலியோ",
+    portfolio_hint: "உங்கள் ஈக்விட்டி மற்றும் கடன் முதலீடுகளின் ஒருங்கிணைந்த, உதாரணக் காட்சி. விளக்க நோக்கங்களுக்காக மட்டும் மாதிரி தரவு.",
+    portfolio_total_value: "மொத்த போர்ட்ஃபோலியோ மதிப்பு",
+    portfolio_invested: "முதலீடு செய்யப்பட்டது",
+    portfolio_returns: "வருமானம் / லாப-நஷ்டம் (Gain-Loss)",
+    portfolio_return_pct: "வருமான %",
+    portfolio_equity_inv: "ஈக்விட்டி முதலீடுகள்",
+    portfolio_debt_inv: "கடன் / பத்திர முதலீடுகள்",
+    portfolio_of_portfolio: "போர்ட்ஃபோலியோவில்",
+    portfolio_alloc_h2: "ஈக்விட்டி Vs கடன் ஒதுக்கீடு",
+    portfolio_alloc_hint: "முதலீடுகளின் தற்போதைய மதிப்பின் அடிப்படையில்.",
+    bar_equity: "ஈக்விட்டி",
+    bar_debt: "கடன் / பத்திரங்கள்",
+    portfolio_equity_h2: "ஈக்விட்டி முதலீடுகள்",
+    portfolio_equity_hint: "தனிப்பட்ட ஈக்விட்டி மற்றும் ஈக்விட்டி மியூச்சுவல் ஃபண்ட் பொசிஷன்கள்.",
+    portfolio_debt_h2: "கடன் / பத்திர முதலீடுகள்",
+    portfolio_debt_hint: "தனிப்பட்ட பத்திரம் மற்றும் நிலையான-வருமான பொசிஷன்கள்.",
+    th_holding: "முதலீடு", th_units: "யூனிட்கள்", th_invested: "முதலீடு செய்யப்பட்ட தொகை", th_current: "தற்போதைய மதிப்பு", th_returns: "வருமானம் / லாப-நஷ்டம்",
+    lump_sum: "ஒரே தொகை (Lump sum)",
+    portfolio_disclaimer: "காட்டப்பட்டுள்ள போர்ட்ஃபோலியோ மதிப்புகள் விளக்க நோக்கங்களுக்காக மட்டும் மாதிரி/உதாரண தரவு, உண்மையான முதலீடுகள் அல்லது சந்தை விலைகளை பிரதிபலிக்காது. இது முதலீட்டு ஆலோசனை அல்ல.",
+
+    btn_connect_demat: "டீமேட் கணக்கை இணைக்கவும் (விரைவில்)",
+    btn_manual_entry: "முதலீடுகளை கைமுறையாக உள்ளிடவும்",
+    btn_sample_view: "மாதிரி போர்ட்ஃபோலியோவைக் காண்க",
+    demat_note: "உண்மையான டீமேட்/ப்ரோக்கர் கணக்கை இணைக்க, உங்கள் ப்ரோக்கர் அல்லது வெல்த்-டேட்டா வழங்குநரின் API மூலம் பாதுகாப்பான, அங்கீகரிக்கப்பட்ட அணுகல் தேவைப்படும். இது எதிர்கால ஒருங்கிணைப்புக்கான ஒரு இடப்பிடிப்பான் — இந்த ப்ரோட்டோடைப்பில் உண்மையான கணக்கு எதுவும் இணைக்கப்படவில்லை.",
+
+    manual_h2: "உங்கள் போர்ட்ஃபோலியோவை உள்ளிடவும்",
+    manual_hint: "கீழே உங்கள் முதலீடுகளைச் சேர்க்கவும். நீங்கள் தட்டச்சு செய்யும்போதே மொத்தம் மற்றும் ஒதுக்கீடு தானாக கணக்கிடப்படும்.",
+    manual_equity_subhead: "ஈக்விட்டி முதலீடு",
+    manual_debt_subhead: "கடன் / பத்திர முதலீடு",
+    lbl_stock_name: "பங்கு / முதலீட்டின் பெயர்",
+    lbl_quantity: "அளவு (Quantity)",
+    lbl_purchase_value: "வாங்கிய / முதலீட்டு மதிப்பு (₹)",
+    lbl_current_value: "தற்போதைய மதிப்பு (₹)",
+    lbl_bond_name: "பத்திரம் / கருவியின் பெயர்",
+    lbl_invested_amount: "முதலீட்டுத் தொகை (₹)",
+    lbl_coupon_rate: "கூப்பன் / வட்டி விகிதம் (%)",
+    lbl_ytm_optional: "YTM (%) — பொருந்தும் இடங்களில்",
+    lbl_maturity_date: "முதிர்வு தேதி",
+    btn_add_equity: "+ ஈக்விட்டி முதலீடு சேர்க்கவும்",
+    btn_add_debt: "+ கடன் முதலீடு சேர்க்கவும்",
+    manual_no_equity: "இதுவரை ஈக்விட்டி முதலீடு எதுவும் சேர்க்கப்படவில்லை.",
+    manual_no_debt: "இதுவரை கடன் முதலீடு எதுவும் சேர்க்கப்படவில்லை.",
+    manual_your_summary: "உங்கள் போர்ட்ஃபோலியோ சுருக்கம்",
+
+    footer_text: "BondScope ஒரு ப்ரோட்டோடைப். அனைத்து பத்திர தரவும் மாதிரி/உதாரணமானது. இது முதலீட்டு ஆலோசனை அல்ல. பத்திர முதலீடுகள் வழங்குபவர், சந்தை, பணமாக்கும் திறன் மற்றும் தவறுதல் அபாயத்திற்கு உட்பட்டவை.",
+  }
+};
+
+function t(key) {
+  const v = T[currentLang] && T[currentLang][key];
+  if (v !== undefined) return v;
+  return T.en[key] !== undefined ? T.en[key] : key;
+}
+
+/* ---------------- Glossary (What is it? / Why does it matter? / Example) ---------------- */
+const GLOSSARY_T = {
+  en: {
+    ytm: { title: "YTM — Yield to Maturity", what: "The estimated annual return you may earn if you buy the bond now and hold it until maturity, assuming all payments are made on time.", why: "YTM is usually more useful than the coupon rate for comparing bonds, since it accounts for the price you actually pay, not just the face value.", example: "If a bond's coupon is 8% but you buy it below face value, your YTM could be higher than 8%." },
+    coupon: { title: "Coupon Rate", what: "The fixed interest rate the issuer pays you, calculated on the bond's face value.", why: "It tells you the periodic interest payment, but not your actual overall return — that's what YTM is for.", example: "A ₹1,000 face-value bond with a 9% coupon pays ₹90 a year in interest, regardless of what you paid for it." },
+    maturity: { title: "Maturity Date", what: "The date the issuer is scheduled to repay the bond's principal amount in full.", why: "It tells you how long your money stays locked in and helps you judge how the investment fits your timeline.", example: "A bond maturing in 2030 will (barring default) return your principal to you in 2030." },
+    rating: { title: "Credit Rating", what: "A third-party assessment of how likely the issuer is to repay its debt on time.", why: "Higher-rated bonds are generally considered lower risk, though a rating never removes risk entirely — it does not mean a return is guaranteed.", example: "'AAA' typically signals the strongest repayment capacity; 'A' or below signals comparatively higher risk." },
+    faceValue: { title: "Face Value", what: "The principal amount of one bond unit, used to calculate coupon payments.", why: "Coupon interest is calculated on this amount, not on the price you paid — so it's the base for your interest income, not your total return.", example: "A ₹1,000 face-value bond pays interest based on ₹1,000, even if you bought it for ₹950." },
+    minInvestment: { title: "Minimum Investment", what: "The smallest amount you're allowed to invest to buy into a particular bond.", why: "It affects how accessible a bond is and how you can diversify a given budget across multiple bonds.", example: "A ₹10,000 minimum means you can't invest just ₹2,000 in that bond." },
+    frequency: { title: "Interest Payment Frequency", what: "How often the issuer pays out coupon interest — e.g. monthly, quarterly, annually.", why: "It affects your cash flow timing, which matters if you're relying on the bond for regular income.", example: "A quarterly-paying bond gives you interest four times a year instead of one lump sum." },
+    secured: { title: "Secured vs Unsecured", what: "Secured bonds are backed by specific assets of the issuer; unsecured bonds are not backed by any specific asset.", why: "If the issuer defaults, secured bondholders generally have a stronger claim on assets than unsecured bondholders — it affects your risk, not your return.", example: "A secured bond backed by property gives bondholders a claim on that property if the issuer can't pay." },
+  },
+  hi: {
+    ytm: { title: "YTM — यील्ड टू मैच्योरिटी", what: "यदि आप अभी बॉन्ड खरीदें और मैच्योरिटी तक रखें, तो अनुमानित वार्षिक रिटर्न — यह मानते हुए कि सभी भुगतान समय पर होते हैं।", why: "बॉन्ड की तुलना के लिए YTM आमतौर पर कूपन दर से अधिक उपयोगी है, क्योंकि इसमें आपकी वास्तविक खरीद कीमत भी शामिल होती है, सिर्फ फेस वैल्यू नहीं।", example: "यदि किसी बॉन्ड का कूपन 8% है पर आप उसे फेस वैल्यू से कम कीमत पर खरीदते हैं, तो आपका YTM 8% से अधिक हो सकता है।" },
+    coupon: { title: "कूपन दर (Coupon Rate)", what: "जारीकर्ता द्वारा दिया जाने वाला तय ब्याज दर, जो बॉन्ड की फेस वैल्यू पर गणना की जाती है।", why: "यह आपको आवधिक ब्याज भुगतान बताता है, पर आपका कुल वास्तविक रिटर्न नहीं — इसके लिए YTM देखें।", example: "₹1,000 फेस वैल्यू और 9% कूपन वाला बॉन्ड सालाना ₹90 ब्याज देता है, चाहे आपने उसे किसी भी कीमत पर खरीदा हो।" },
+    maturity: { title: "मैच्योरिटी तिथि", what: "वह तिथि जब जारीकर्ता को बॉन्ड की मूल राशि पूरी तरह चुकानी होती है।", why: "यह बताता है कि आपका पैसा कितने समय तक लॉक रहेगा और यह आपके निवेश टाइमलाइन में कैसे फिट बैठता है।", example: "2030 में मैच्योर होने वाला बॉन्ड (डिफ़ॉल्ट न हो तो) 2030 में आपकी मूल राशि लौटाएगा।" },
+    rating: { title: "क्रेडिट रेटिंग", what: "जारीकर्ता समय पर अपना कर्ज़ चुका पाएगा या नहीं, इसका एक स्वतंत्र आकलन।", why: "उच्च रेटिंग वाले बॉन्ड आमतौर पर कम जोखिम भरे माने जाते हैं, पर रेटिंग जोखिम को पूरी तरह खत्म नहीं करती — इसका मतलब गारंटीशुदा रिटर्न नहीं है।", example: "'AAA' आमतौर पर सबसे मज़बूत चुकाने की क्षमता दर्शाता है; 'A' या उससे कम तुलनात्मक रूप से अधिक जोखिम दर्शाता है।" },
+    faceValue: { title: "फेस वैल्यू", what: "एक बॉन्ड यूनिट की मूल राशि, जिसका उपयोग कूपन भुगतान की गणना के लिए होता है।", why: "कूपन ब्याज इसी राशि पर गणना होता है, आपकी खरीद कीमत पर नहीं — यह आपकी ब्याज आय का आधार है, आपका कुल रिटर्न नहीं।", example: "₹1,000 फेस वैल्यू वाला बॉन्ड ₹1,000 पर आधारित ब्याज देता है, भले ही आपने उसे ₹950 में खरीदा हो।" },
+    minInvestment: { title: "न्यूनतम निवेश", what: "किसी विशेष बॉन्ड में निवेश करने के लिए न्यूनतम अनुमत राशि।", why: "यह तय करता है कि बॉन्ड कितना सुलभ है और आप अपने बजट को कई बॉन्ड में कैसे विभाजित कर सकते हैं।", example: "₹10,000 न्यूनतम का मतलब है कि आप उस बॉन्ड में केवल ₹2,000 निवेश नहीं कर सकते।" },
+    frequency: { title: "भुगतान आवृत्ति (Interest Payment Frequency)", what: "जारीकर्ता कितनी बार कूपन ब्याज देता है — जैसे मासिक, त्रैमासिक, वार्षिक।", why: "यह आपके कैश फ्लो की टाइमिंग को प्रभावित करता है, जो महत्वपूर्ण है अगर आप नियमित आय के लिए बॉन्ड पर निर्भर हैं।", example: "त्रैमासिक भुगतान वाला बॉन्ड आपको साल में एक बार की जगह चार बार ब्याज देता है।" },
+    secured: { title: "सुरक्षित बनाम असुरक्षित (Secured vs Unsecured)", what: "सुरक्षित बॉन्ड जारीकर्ता की विशिष्ट संपत्तियों द्वारा समर्थित होते हैं; असुरक्षित बॉन्ड किसी विशेष संपत्ति द्वारा समर्थित नहीं होते।", why: "यदि जारीकर्ता डिफ़ॉल्ट करता है, तो सुरक्षित बॉन्डधारकों का संपत्ति पर दावा असुरक्षित बॉन्डधारकों से आमतौर पर मज़बूत होता है — यह आपके जोखिम को प्रभावित करता है, रिटर्न को नहीं।", example: "संपत्ति द्वारा समर्थित सुरक्षित बॉन्ड में, यदि जारीकर्ता भुगतान नहीं कर पाता, तो बॉन्डधारकों का उस संपत्ति पर दावा होता है।" },
+  },
+  ta: {
+    ytm: { title: "YTM — முதிர்வு வருமானம்", what: "நீங்கள் இப்போது பத்திரத்தை வாங்கி முதிர்வு வரை வைத்திருந்தால், அனைத்து பணமும் சரியான நேரத்தில் செலுத்தப்படும் என்று கருதி, கிடைக்கக்கூடிய உதாரண ஆண்டு வருமானம்.", why: "பத்திரங்களை ஒப்பிட YTM பொதுவாக கூப்பன் விகிதத்தை விட பயனுள்ளதாக இருக்கும், ஏனெனில் இது நீங்கள் உண்மையில் செலுத்திய விலையையும் கணக்கில் எடுத்துக்கொள்கிறது, முக மதிப்பை மட்டும் அல்ல.", example: "ஒரு பத்திரத்தின் கூப்பன் 8% ஆக இருந்தாலும், முக மதிப்பை விட குறைவாக வாங்கினால், உங்கள் YTM 8% ஐ விட அதிகமாக இருக்கலாம்." },
+    coupon: { title: "கூப்பன் விகிதம் (Coupon Rate)", what: "வழங்குபவர் உங்களுக்குச் செலுத்தும் நிலையான வட்டி விகிதம், பத்திரத்தின் முக மதிப்பின் அடிப்படையில் கணக்கிடப்படுகிறது.", why: "இது உங்களுக்கு அவ்வப்போது கிடைக்கும் வட்டித் தொகையைக் காட்டுகிறது, ஆனால் உங்கள் மொத்த உண்மையான வருமானத்தைக் காட்டாது — அதற்கு YTM பார்க்கவும்.", example: "₹1,000 முக மதிப்பும் 9% கூப்பனும் கொண்ட பத்திரம் ஆண்டுக்கு ₹90 வட்டி தரும், நீங்கள் அதை எந்த விலைக்கு வாங்கினாலும் சரி." },
+    maturity: { title: "முதிர்வு தேதி", what: "வழங்குபவர் பத்திரத்தின் அசல் தொகையை முழுவதுமாகத் திருப்பிச் செலுத்த வேண்டிய தேதி.", why: "இது உங்கள் பணம் எவ்வளவு காலம் பூட்டப்பட்டிருக்கும் என்பதையும், அது உங்கள் முதலீட்டு காலத்திற்கு எவ்வாறு பொருந்துகிறது என்பதையும் காட்டுகிறது.", example: "2030-ல் முதிர்வடையும் பத்திரம் (தவறுதல் இல்லையெனில்) 2030-ல் உங்கள் அசல் தொகையைத் திருப்பித் தரும்." },
+    rating: { title: "கடன் மதிப்பீடு (Credit Rating)", what: "வழங்குபவர் தனது கடனை சரியான நேரத்தில் திருப்பிச் செலுத்த வாய்ப்பு உள்ளதா என்பது பற்றிய ஒரு சுயாதீன மதிப்பீடு.", why: "அதிக மதிப்பீடு உள்ள பத்திரங்கள் பொதுவாக குறைந்த அபாயம் உடையவை என்று கருதப்படுகின்றன, ஆனாலும் மதிப்பீடு அபாயத்தை முழுவதுமாக நீக்காது — வருமானம் உத்தரவாதம் என்று பொருள் இல்லை.", example: "'AAA' பொதுவாக மிக வலுவான திருப்பிச் செலுத்தும் திறனைக் குறிக்கிறது; 'A' அல்லது அதற்குக் கீழ் ஒப்பீட்டளவில் அதிக அபாயத்தைக் குறிக்கிறது." },
+    faceValue: { title: "முக மதிப்பு (Face Value)", what: "ஒரு பத்திர யூனிட்டின் அசல் தொகை, கூப்பன் பணம் கணக்கிட பயன்படுத்தப்படுகிறது.", why: "கூப்பன் வட்டி இந்தத் தொகையின் அடிப்படையில் கணக்கிடப்படுகிறது, நீங்கள் செலுத்திய விலையின் அடிப்படையில் அல்ல — இது உங்கள் வட்டி வருமானத்தின் அடிப்படை, உங்கள் மொத்த வருமானம் அல்ல.", example: "₹1,000 முக மதிப்புள்ள பத்திரம், நீங்கள் அதை ₹950-க்கு வாங்கினாலும் ₹1,000 அடிப்படையில் வட்டி தரும்." },
+    minInvestment: { title: "குறைந்தபட்ச முதலீடு", what: "ஒரு குறிப்பிட்ட பத்திரத்தில் முதலீடு செய்ய அனுமதிக்கப்பட்ட மிகச் சிறிய தொகை.", why: "இது ஒரு பத்திரம் எவ்வளவு அணுகக்கூடியது என்பதையும், உங்கள் பட்ஜெட்டை பல பத்திரங்களில் எப்படி பரப்பலாம் என்பதையும் பாதிக்கிறது.", example: "₹10,000 குறைந்தபட்சம் என்றால், அந்த பத்திரத்தில் ₹2,000 மட்டும் முதலீடு செய்ய முடியாது." },
+    frequency: { title: "கட்டண அதிர்வெண் (Interest Payment Frequency)", what: "வழங்குபவர் கூப்பன் வட்டியை எவ்வளவு அடிக்கடி செலுத்துகிறார் — எ.கா. மாதம், காலாண்டு, ஆண்டுதோறும்.", why: "இது உங்கள் பணப்புழக்கத்தின் நேரத்தை பாதிக்கிறது, குறிப்பாக நீங்கள் வழக்கமான வருமானத்திற்காக பத்திரத்தை நம்பியிருந்தால் இது முக்கியம்.", example: "காலாண்டுதோறும் செலுத்தும் பத்திரம் ஆண்டுக்கு ஒரு முறைக்குப் பதிலாக நான்கு முறை வட்டி தரும்." },
+    secured: { title: "பாதுகாக்கப்பட்டது Vs பாதுகாக்கப்படாதது", what: "பாதுகாக்கப்பட்ட பத்திரங்கள் வழங்குபவரின் குறிப்பிட்ட சொத்துகளால் ஆதரிக்கப்படுகின்றன; பாதுகாக்கப்படாத பத்திரங்கள் எந்த குறிப்பிட்ட சொத்தாலும் ஆதரிக்கப்படுவதில்லை.", why: "வழங்குபவர் தவறினால், பாதுகாக்கப்பட்ட பத்திரதாரர்களுக்கு சொத்துகள் மீது பொதுவாக பாதுகாக்கப்படாதவர்களை விட வலுவான உரிமை உண்டு — இது உங்கள் அபாயத்தை பாதிக்கிறது, வருமானத்தை அல்ல.", example: "சொத்தால் ஆதரிக்கப்படும் பாதுகாக்கப்பட்ட பத்திரத்தில், வழங்குபவர் செலுத்த முடியாவிட்டால், பத்திரதாரர்களுக்கு அந்த சொத்தின் மீது உரிமை உண்டு." },
+  }
+};
+
+
+/* ---------------- Alternative fixed-income instruments (sample/illustrative) ----------------
+   Extends Compare beyond bonds. Rates and figures are illustrative sample data,
+   not live market quotes. FD/PPF rates are contractual where noted; bond "return"
+   figures are indicative YTM, not guaranteed.
+------------------------------------------------------------------------------- */
+const ALT_INSTRUMENTS = [
+  {
+    id: "fd1", name: "Bank Fixed Deposit (5-yr, Scheduled Bank)", instrumentType: "Fixed Deposit",
+    rateLabel: "Interest Rate", rate: 7.00, rateIsContractual: true,
+    returnLabel: "Indicative Return", returnPct: 7.00,
+    tenure: "5 years", minInvestment: 1000, risk: "Low", liquidity: "Low (premature withdrawal penalty)",
+    tax: "Interest fully taxable as per slab; TDS applicable above threshold",
+  },
+  {
+    id: "fd2", name: "Bank Fixed Deposit (1-yr, Scheduled Bank)", instrumentType: "Fixed Deposit",
+    rateLabel: "Interest Rate", rate: 6.50, rateIsContractual: true,
+    returnLabel: "Indicative Return", returnPct: 6.50,
+    tenure: "1 year", minInvestment: 1000, risk: "Low", liquidity: "Low (premature withdrawal penalty)",
+    tax: "Interest fully taxable as per slab; TDS applicable above threshold",
+  },
+  {
+    id: "ppf1", name: "Public Provident Fund (PPF)", instrumentType: "PPF",
+    rateLabel: "Interest Rate", rate: 7.10, rateIsContractual: true,
+    returnLabel: "Indicative Return", returnPct: 7.10,
+    tenure: "15 years (lock-in)", minInvestment: 500, risk: "Low (Sovereign-backed)", liquidity: "Very Low (partial withdrawal from year 7)",
+    tax: "Exempt-Exempt-Exempt (EEE) — interest and maturity proceeds tax-free",
+  },
+  {
+    id: "ncd1", name: "Corporate NCD (Illustrative, AA-rated)", instrumentType: "NCD",
+    rateLabel: "Coupon Rate", rate: 9.50, rateIsContractual: true,
+    returnLabel: "Indicative Yield (YTM)", returnPct: 10.05,
+    tenure: "3–5 years", minInvestment: 10000, risk: "Moderate", liquidity: "Moderate (listed, subject to market liquidity)",
+    tax: "Interest taxable as per slab; capital gains rules apply on sale",
+  },
+];
+
+function altRowsFromBonds() {
+  return BONDS.map(b => ({
+    id: b.id, name: b.issuer, instrumentType: b.type,
+    rateLabel: "Coupon Rate", rate: b.coupon, rateIsContractual: true,
+    returnLabel: "Indicative Yield (YTM)", returnPct: b.ytm,
+    tenure: fmtDate(b.maturity), minInvestment: b.minInvestment, risk: b.risk,
+    liquidity: b.secured === "Sovereign-backed" ? "Moderate–High (actively traded G-Sec)" : "Moderate (listed, subject to market liquidity)",
+    tax: "Interest taxable as per slab; capital gains rules apply on sale",
+    isBond: true,
+  }));
+}
+
+
+
+/* ---------------- Risk scoring (transparent, weighted) ----------------
+   Each factor contributes points toward a 0–100 risk-capacity score.
+   Scenario response is weighted 2x — a stated behavioural reaction
+   under stress is a better predictor of risk tolerance than
+   demographic proxies alone, so it dominates the other four inputs
+   combined only slightly less than all of them together. This is a
+   design choice, not a validated psychometric model — see disclaimer
+   shown to the user.
+   Max raw points: age20 + income20 + horizon20 + experience20 + scenario40 = 120
+   Normalised to /100.
+------------------------------------------------------------------- */
+function computeRiskScore(p) {
+  let pts = 0;
+  if (p.age === "<30") pts += 20;
+  else if (p.age === "30-45") pts += 14;
+  else if (p.age === "45-60") pts += 8;
+  else if (p.age === "60+") pts += 2;
+
+  if (p.income === "<5L") pts += 2;
+  else if (p.income === "5-10L") pts += 6;
+  else if (p.income === "10-20L") pts += 12;
+  else if (p.income === "20-50L") pts += 16;
+  else if (p.income === "50L+") pts += 20;
+
+  if (p.horizon === "<1y") pts += 2;
+  else if (p.horizon === "1-3y") pts += 8;
+  else if (p.horizon === "3-5y") pts += 14;
+  else if (p.horizon === "5y+") pts += 20;
+
+  if (p.experience === "beginner") pts += 4;
+  else if (p.experience === "some") pts += 12;
+  else if (p.experience === "experienced") pts += 20;
+
+  if (p.scenario === "sell") pts += 4 * 2;
+  else if (p.scenario === "hold") pts += 12 * 2;
+  else if (p.scenario === "invest_more") pts += 20 * 2;
+
+  const normalized = Math.round((pts / 120) * 100);
+  let profile, allocation;
+  if (normalized <= 40) { profile = "Risk-Averse"; allocation = "40–60%"; }
+  else if (normalized <= 70) { profile = "Risk-Neutral"; allocation = "25–40%"; }
+  else { profile = "Risk-Tolerant"; allocation = "15–30%"; }
+  return { score: normalized, profile, allocation };
+}
+
+function bondsForProfile(profile) {
+  if (profile === "Risk-Averse") return BONDS.filter(b => ["Low", "Low-Moderate"].includes(b.risk));
+  if (profile === "Risk-Tolerant") return BONDS.filter(b => ["Moderate", "Moderate-High", "High"].includes(b.risk));
+  return BONDS.filter(b => ["Low-Moderate", "Moderate", "Moderate-High"].includes(b.risk));
+}
+
+const fmtINR = (n) => "₹" + n.toLocaleString("en-IN");
+const fmtDate = (d) => new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+/* ---------------- App state ---------------- */
+let screen = "explore";
+let profileForm = { age: "", income: "", profession: "", horizon: "", experience: "", scenario: "" };
+let result = null;
+let compareIds = [];
+let compareAltIds = [];
+let compareMode = "bonds"; // "bonds" | "alternatives"
+let detailBondId = null;
+let portfolioView = "sample"; // "sample" | "manual"
+let manualEquity = [];
+let manualDebt = [];
+
+function setLang(lang) {
+  currentLang = T[lang] ? lang : "en";
+  document.getElementById("langSelect").value = currentLang;
+  render();
+}
+
+/* ---------------- Nav ---------------- */
+function renderNav() {
+  const items = [
+    ["explore", t("nav_explore")],
+    ["compare", t("nav_compare") + (compareIds.length ? ` (${compareIds.length})` : "")],
+    ["portfolio", t("nav_portfolio")],
+    ["profile", t("nav_profile")],
+  ];
+  const navLinks = document.getElementById("navLinks");
+  navLinks.innerHTML = items.map(([key, label]) => {
+    const target = key === "profile" ? (result ? "result" : "profile") : key;
+    const isActive = screen === key || (key === "profile" && (screen === "profile" || screen === "result"));
+    return `<button class="nav-btn ${isActive ? "active" : ""}" onclick="setScreen('${target}')">${label}</button>`;
+  }).join("");
+  const navCta = document.getElementById("navCta");
+  if (navCta) navCta.textContent = t("nav_cta");
+  const footerEl = document.getElementById("siteFooter");
+  if (footerEl) footerEl.textContent = t("footer_text");
+}
+
+function setScreen(s) {
+  screen = s;
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* ---------------- Bond card ---------------- */
+function fieldHtml(label, value, learnId) {
+  return `
+    <div>
+      <div class="field-label">${label} ${learnId ? `<button class="learn-more" onclick="openGlossary('${learnId}')">${t("learn_more")}</button>` : ""}</div>
+      <div class="field-value mono">${value}</div>
+    </div>`;
+}
+
+function bondCardHtml(b, opts = {}) {
+  const inCompare = compareIds.includes(b.id);
+  const reason = opts.reason;
+  return `
+    <div class="bond-card">
+      <div class="bond-card-top">
+        <div>
+          <div class="bond-issuer">${esc(b.issuer)}</div>
+          <div class="bond-type">${esc(b.type)}</div>
+        </div>
+        <span class="rating-badge mono">${b.rating}</span>
+      </div>
+
+      <div class="ytm-row">
+        <div class="ytm-tick"></div>
+        <div>
+          <div class="field-label">${t("fld_ytm")} <button class="learn-more" onclick="openGlossary('ytm')">${t("learn_more")}</button></div>
+          <div class="ytm-value mono">${b.ytm.toFixed(2)}%</div>
+        </div>
+      </div>
+
+      <div class="field-grid">
+        ${fieldHtml(t("fld_coupon"), b.coupon.toFixed(2) + "%", "coupon")}
+        ${fieldHtml(t("fld_maturity"), fmtDate(b.maturity), "maturity")}
+        ${fieldHtml(t("fld_min_inv"), fmtINR(b.minInvestment))}
+        ${fieldHtml(t("fld_pay_freq"), b.frequency)}
+        ${fieldHtml(t("fld_face_value"), fmtINR(b.faceValue), "faceValue")}
+        ${fieldHtml(t("fld_secured"), b.secured)}
+      </div>
+
+      ${reason ? `<div class="reason-box"><strong>${t("why_suits")}</strong> ${reason}</div>` : ""}
+
+      <div class="card-actions">
+        <button class="btn-view" onclick="openDetail('${b.id}')">${t("btn_view_details")}</button>
+        <button class="btn-compare ${inCompare ? "active" : ""}" onclick="toggleCompare('${b.id}')">${inCompare ? t("btn_compare_active") : t("btn_compare_add")}</button>
+      </div>
+    </div>`;
+}
+
+function toggleCompare(id) {
+  if (compareIds.includes(id)) compareIds = compareIds.filter(x => x !== id);
+  else if (compareIds.length < 4) compareIds = [...compareIds, id];
+  render();
+}
+
+/* ---------------- Explore screen ---------------- */
+function eduCardHtml(title, body) {
+  return `<div class="edu-card"><div class="title">${title}</div><div class="body">${body}</div></div>`;
+}
+
+function renderExplore() {
+  return `
+    <section class="hero">
+      <div class="eyebrow">${t("hero_eyebrow")}</div>
+      <h1>${t("hero_h1_1")}<br />${t("hero_h1_2")}</h1>
+      <p>${t("hero_p")}</p>
+      <button class="hero-cta" onclick="setScreen('profile')">${t("hero_cta")}</button>
+    </section>
+
+    <section class="section">
+      <h2>${t("edu_h2")}</h2>
+      <div class="edu-grid">
+        ${eduCardHtml(t("edu1_t"), t("edu1_b"))}
+        ${eduCardHtml(t("edu2_t"), t("edu2_b"))}
+        ${eduCardHtml(t("edu3_t"), t("edu3_b"))}
+        ${eduCardHtml(t("edu4_t"), t("edu4_b"))}
+        ${eduCardHtml(t("edu5_t"), t("edu5_b"))}
+        ${eduCardHtml(t("edu6_t"), t("edu6_b"))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head-row">
+        <h2 style="margin:0">${t("explore_h2")}</h2>
+        <span class="sample-tag">${t("sample_tag")}</span>
+      </div>
+      <p class="hint-line">${t("explore_hint")}</p>
+      <div class="bond-grid">
+        ${BONDS.map(b => bondCardHtml(b)).join("")}
+      </div>
+    </section>`;
+}
+
+/* ---------------- Profile screen ---------------- */
+function radioGroupHtml(field, options) {
+  return `<div class="radio-group">
+    ${options.map(([val, label]) => `
+      <button class="radio-btn ${profileForm[field] === val ? "selected" : ""}" onclick="setProfileField('${field}','${val}')">${label}</button>
+    `).join("")}
+  </div>`;
+}
+
+function setProfileField(field, val) {
+  profileForm[field] = val;
+  render();
+}
+
+function isProfileComplete() {
+  const p = profileForm;
+  return p.age && p.income && p.profession && p.horizon && p.experience && p.scenario;
+}
+
+function renderProfile() {
+  const complete = isProfileComplete();
+  return `
+    <div class="profile-wrap">
+      <h1>${t("profile_h1")}</h1>
+      <p>${t("profile_p")}</p>
+
+      <div class="field-block">
+        <div class="field-block-label">${t("lbl_age")}</div>
+        ${radioGroupHtml("age", [["<30", t("opt_age_u30")], ["30-45", t("opt_age_3045")], ["45-60", t("opt_age_4560")], ["60+", t("opt_age_60p")]])}
+      </div>
+      <div class="field-block">
+        <div class="field-block-label">${t("lbl_income")}</div>
+        ${radioGroupHtml("income", [["<5L", t("opt_inc_5")], ["5-10L", t("opt_inc_510")], ["10-20L", t("opt_inc_1020")], ["20-50L", t("opt_inc_2050")], ["50L+", t("opt_inc_50p")]])}
+      </div>
+      <div class="field-block">
+        <div class="field-block-label">${t("lbl_profession")}</div>
+        ${radioGroupHtml("profession", [["student", t("opt_prof_student")], ["salaried", t("opt_prof_salaried")], ["business", t("opt_prof_business")], ["self", t("opt_prof_self")], ["professional", t("opt_prof_professional")], ["retired", t("opt_prof_retired")], ["other", t("opt_prof_other")]])}
+      </div>
+      <div class="field-block">
+        <div class="field-block-label">${t("lbl_horizon")}</div>
+        ${radioGroupHtml("horizon", [["<1y", t("opt_hzn_1")], ["1-3y", t("opt_hzn_13")], ["3-5y", t("opt_hzn_35")], ["5y+", t("opt_hzn_5p")]])}
+      </div>
+      <div class="field-block">
+        <div class="field-block-label">${t("lbl_experience")}</div>
+        ${radioGroupHtml("experience", [["beginner", t("opt_exp_beginner")], ["some", t("opt_exp_some")], ["experienced", t("opt_exp_experienced")]])}
+      </div>
+      <div class="field-block">
+        <div class="field-block-label">${t("lbl_scenario")}</div>
+        ${radioGroupHtml("scenario", [["sell", t("opt_scn_sell")], ["hold", t("opt_scn_hold")], ["invest_more", t("opt_scn_more")]])}
+      </div>
+
+      <button class="btn-submit ${complete ? "enabled" : ""}" ${complete ? "" : "disabled"} onclick="submitProfile()">${t("btn_see_risk")}</button>
+    </div>`;
+}
+
+function submitProfile() {
+  if (!isProfileComplete()) return;
+  result = computeRiskScore(profileForm);
+  setScreen("result");
+}
+
+/* ---------------- Result screen ---------------- */
+const PROFILE_LABEL_KEY = { "Risk-Averse": "profile_risk_averse", "Risk-Neutral": "profile_risk_neutral", "Risk-Tolerant": "profile_risk_tolerant" };
+function profileLabel(p) { return T[currentLang][PROFILE_LABEL_KEY[p]] || T.en[PROFILE_LABEL_KEY[p]] || p; }
+
+function renderResult() {
+  if (!result) return renderProfile();
+  const recs = bondsForProfile(result.profile);
+  const reasonFor = (b) => {
+    const template = t("reason_template");
+    return template.replace("{profile}", profileLabel(result.profile).toLowerCase()).replace("{risk}", b.risk.toLowerCase()).replace("{horizon}", b.horizon);
+  };
+
+  return `
+    <div class="result-wrap">
+      <div class="result-card">
+        <div class="result-pretext">${t("result_pretext")}</div>
+        <div class="result-profile">${profileLabel(result.profile)}</div>
+        <div class="result-score mono">${t("result_score")}: ${result.score}/100</div>
+        <div class="alloc-box">
+          <div class="alloc-label">${t("alloc_label")}</div>
+          <div class="alloc-value">${result.allocation} ${t("alloc_of")}</div>
+        </div>
+        <p class="result-disclaimer">${t("result_disclaimer")}</p>
+      </div>
+
+      <div class="rec-head-row">
+        <h2>${t("rec_h2")}</h2>
+        ${compareIds.length > 0 ? `<button class="compare-link" onclick="setScreen('compare')">${t("compare_selected")} ${compareIds.length} ${t("compare_selected_arrow")}</button>` : ""}
+      </div>
+      <div class="bond-grid">
+        ${recs.map(b => bondCardHtml(b, { reason: reasonFor(b) })).join("")}
+      </div>
+    </div>`;
+}
+
+/* ---------------- Portfolio screen ---------------- */
+function portfolioMetrics() {
+  const equityInvested = PORTFOLIO_EQUITY.reduce((s, h) => s + h.units * h.avgCost, 0);
+  const equityCurrent = PORTFOLIO_EQUITY.reduce((s, h) => s + h.units * h.currentPrice, 0);
+  const debtInvested = PORTFOLIO_DEBT.reduce((s, h) => s + h.invested, 0);
+  const debtCurrent = PORTFOLIO_DEBT.reduce((s, h) => s + h.currentValue, 0);
+  const totalInvested = equityInvested + debtInvested;
+  const totalCurrent = equityCurrent + debtCurrent;
+  const totalGain = totalCurrent - totalInvested;
+  const totalReturnPct = totalInvested > 0 ? (totalGain / totalInvested) * 100 : 0;
+  const equityPct = totalCurrent > 0 ? (equityCurrent / totalCurrent) * 100 : 0;
+  const debtPct = totalCurrent > 0 ? (debtCurrent / totalCurrent) * 100 : 0;
+  return { equityInvested, equityCurrent, debtInvested, debtCurrent, totalInvested, totalCurrent, totalGain, totalReturnPct, equityPct, debtPct };
+}
+
+function holdingsTableHtml(holdings, kind) {
+  const rows = holdings.map(h => {
+    const invested = kind === "equity" ? h.units * h.avgCost : h.invested;
+    const current = kind === "equity" ? h.units * h.currentPrice : h.currentValue;
+    const gain = current - invested;
+    const gainPct = invested > 0 ? (gain / invested) * 100 : 0;
+    const gainClass = gain >= 0 ? "highlight" : "";
+    const sign = gain >= 0 ? "+" : "";
+    return `
+      <tr>
+        <td class="param-label">${esc(h.name)}<br><span class="hint-line" style="margin:0;">${esc(h.type)}</span></td>
+        <td class="data-cell mono">${kind === "equity" ? h.units : (h.faceValue ? h.units + " units" : t("lump_sum"))}</td>
+        <td class="data-cell mono">${fmtINR(invested)}</td>
+        <td class="data-cell mono">${fmtINR(current)}</td>
+        <td class="data-cell mono ${gainClass}">${sign}${fmtINR(Math.abs(gain))}<span class="hl-tag mono">${sign}${gainPct.toFixed(2)}%</span></td>
+      </tr>`;
+  }).join("");
+
+  return `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>${t("th_holding")}</th>
+            <th>${t("th_units")}</th>
+            <th>${t("th_invested")}</th>
+            <th>${t("th_current")}</th>
+            <th>${t("th_returns")}</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function portfolioSummaryGridHtml(m) {
+  const gainSign = m.totalGain >= 0 ? "+" : "";
+  const gainColor = m.totalGain >= 0 ? "var(--green)" : "#B3261E";
+  return `
+    <div class="portfolio-summary-grid">
+      <div class="summary-card">
+        <div class="alloc-label">${t("portfolio_total_value")}</div>
+        <div class="summary-value">${fmtINR(m.totalCurrent)}</div>
+        <div class="summary-sub">${t("portfolio_invested")}: ${fmtINR(m.totalInvested)}</div>
+      </div>
+      <div class="summary-card">
+        <div class="alloc-label">${t("portfolio_returns")}</div>
+        <div class="summary-value" style="color:${gainColor}">${gainSign}${fmtINR(Math.abs(m.totalGain))}</div>
+        <div class="summary-sub">${t("portfolio_return_pct")}: ${gainSign}${m.totalReturnPct.toFixed(2)}%</div>
+      </div>
+      <div class="summary-card">
+        <div class="alloc-label">${t("portfolio_equity_inv")}</div>
+        <div class="summary-value">${fmtINR(m.equityCurrent)}</div>
+        <div class="summary-sub">${m.equityPct.toFixed(1)}% ${t("portfolio_of_portfolio")}</div>
+      </div>
+      <div class="summary-card">
+        <div class="alloc-label">${t("portfolio_debt_inv")}</div>
+        <div class="summary-value">${fmtINR(m.debtCurrent)}</div>
+        <div class="summary-sub">${m.debtPct.toFixed(1)}% ${t("portfolio_of_portfolio")}</div>
+      </div>
+    </div>`;
+}
+
+function portfolioAllocationVizHtml(m) {
+  return `
+    <div class="return-viz" style="margin-bottom:36px;">
+      <h2>${t("portfolio_alloc_h2")}</h2>
+      <p class="hint-line">${t("portfolio_alloc_hint")}</p>
+      <div class="bar-row">
+        <div class="bar-label">${t("bar_equity")}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${m.equityPct}%"></div></div>
+        <div class="bar-value mono">${m.equityPct.toFixed(1)}%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">${t("bar_debt")}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${m.debtPct}%; background:var(--green);"></div></div>
+        <div class="bar-value mono">${m.debtPct.toFixed(1)}%</div>
+      </div>
+    </div>`;
+}
+
+function setPortfolioView(v) {
+  portfolioView = v;
+  render();
+}
+
+function renderPortfolio() {
+  const toggleRow = `
+    <div class="portfolio-actions-row">
+      <button class="btn-secondary ${portfolioView === "sample" ? "active" : ""}" onclick="setPortfolioView('sample')">${t("btn_sample_view")}</button>
+      <button class="btn-secondary ${portfolioView === "manual" ? "active" : ""}" onclick="setPortfolioView('manual')">${t("btn_manual_entry")}</button>
+      <button class="btn-disabled-future" disabled title="${t("demat_note")}">${t("btn_connect_demat")}</button>
+    </div>
+    <p class="hint-line" style="margin-top:-10px;">${t("demat_note")}</p>`;
+
+  if (portfolioView === "manual") {
+    return `
+      <div class="portfolio-wrap">
+        <h1>${t("portfolio_h1")}</h1>
+        <p class="hint-line">${t("portfolio_hint")}</p>
+        ${toggleRow}
+        ${renderManualPortfolio()}
+      </div>`;
+  }
+
+  const m = portfolioMetrics();
+  return `
+    <div class="portfolio-wrap">
+      <h1>${t("portfolio_h1")}</h1>
+      <p class="hint-line">${t("portfolio_hint")}</p>
+      ${toggleRow}
+
+      ${portfolioSummaryGridHtml(m)}
+      ${portfolioAllocationVizHtml(m)}
+
+      <div class="section">
+        <h2 class="portfolio-section-title">${t("portfolio_equity_h2")}</h2>
+        <p class="hint-line">${t("portfolio_equity_hint")}</p>
+        ${holdingsTableHtml(PORTFOLIO_EQUITY, "equity")}
+      </div>
+
+      <div class="section">
+        <h2 class="portfolio-section-title">${t("portfolio_debt_h2")}</h2>
+        <p class="hint-line">${t("portfolio_debt_hint")}</p>
+        ${holdingsTableHtml(PORTFOLIO_DEBT, "debt")}
+      </div>
+
+      <p class="result-disclaimer">${t("portfolio_disclaimer")}</p>
+    </div>`;
+}
+
+/* ---------------- Manual portfolio entry ---------------- */
+let _holdingSeq = 1;
+function addManualEquity() {
+  manualEquity.push({ id: "me" + (_holdingSeq++), name: "", units: "", invested: "", current: "" });
+  render();
+}
+function addManualDebt() {
+  manualDebt.push({ id: "md" + (_holdingSeq++), name: "", invested: "", coupon: "", ytm: "", maturity: "", current: "" });
+  render();
+}
+function removeManualEquity(id) { manualEquity = manualEquity.filter(h => h.id !== id); render(); }
+function removeManualDebt(id) { manualDebt = manualDebt.filter(h => h.id !== id); render(); }
+function updateManualEquity(id, field, value) {
+  const h = manualEquity.find(x => x.id === id);
+  if (h) h[field] = value;
+  renderManualSummaryOnly();
+}
+function updateManualDebt(id, field, value) {
+  const h = manualDebt.find(x => x.id === id);
+  if (h) h[field] = value;
+  renderManualSummaryOnly();
+}
+
+function renderManualSummaryOnly() {
+  const el = document.getElementById("manualSummaryBox");
+  if (el) el.outerHTML = manualSummaryBoxHtml();
+}
+
+function manualPortfolioMetrics() {
+  const equityInvested = manualEquity.reduce((s, h) => s + (parseFloat(h.invested) || 0), 0);
+  const equityCurrent = manualEquity.reduce((s, h) => s + (parseFloat(h.current) || 0), 0);
+  const debtInvested = manualDebt.reduce((s, h) => s + (parseFloat(h.invested) || 0), 0);
+  const debtCurrent = manualDebt.reduce((s, h) => s + (parseFloat(h.current) || 0), 0);
+  const totalInvested = equityInvested + debtInvested;
+  const totalCurrent = equityCurrent + debtCurrent;
+  const totalGain = totalCurrent - totalInvested;
+  const totalReturnPct = totalInvested > 0 ? (totalGain / totalInvested) * 100 : 0;
+  const equityPct = totalCurrent > 0 ? (equityCurrent / totalCurrent) * 100 : 0;
+  const debtPct = totalCurrent > 0 ? (debtCurrent / totalCurrent) * 100 : 0;
+  return { equityInvested, equityCurrent, debtInvested, debtCurrent, totalInvested, totalCurrent, totalGain, totalReturnPct, equityPct, debtPct };
+}
+
+function manualSummaryBoxHtml() {
+  const hasAny = manualEquity.length > 0 || manualDebt.length > 0;
+  if (!hasAny) return `<div id="manualSummaryBox"></div>`;
+  const m = manualPortfolioMetrics();
+  return `<div id="manualSummaryBox">
+    <h2 class="portfolio-section-title" style="margin-top:24px;">${t("manual_your_summary")}</h2>
+    ${portfolioSummaryGridHtml(m)}
+    ${portfolioAllocationVizHtml(m)}
+  </div>`;
+}
+
+function manualInputRow(label, id, onInputAttr, type, value) {
+  return `
+    <div class="form-input-row">
+      <label class="form-input-label" for="${id}">${label}</label>
+      <input class="form-input" id="${id}" type="${type}" value="${esc(String(value ?? ""))}" ${onInputAttr} />
+    </div>`;
+}
+
+function renderManualPortfolio() {
+  const equityRows = manualEquity.map(h => `
+    <div class="manual-entry-block">
+      <div class="manual-entry-grid">
+        ${manualInputRow(t("lbl_stock_name"), `eq_name_${h.id}`, `oninput="updateManualEquity('${h.id}','name',this.value)"`, "text", h.name)}
+        ${manualInputRow(t("lbl_quantity"), `eq_qty_${h.id}`, `oninput="updateManualEquity('${h.id}','units',this.value)"`, "number", h.units)}
+        ${manualInputRow(t("lbl_purchase_value"), `eq_inv_${h.id}`, `oninput="updateManualEquity('${h.id}','invested',this.value)"`, "number", h.invested)}
+        ${manualInputRow(t("lbl_current_value"), `eq_cur_${h.id}`, `oninput="updateManualEquity('${h.id}','current',this.value)"`, "number", h.current)}
+      </div>
+      <button class="holding-row-remove" onclick="removeManualEquity('${h.id}')">${t("remove_btn")}</button>
+    </div>`).join("");
+
+  const debtRows = manualDebt.map(h => `
+    <div class="manual-entry-block">
+      <div class="manual-entry-grid">
+        ${manualInputRow(t("lbl_bond_name"), `db_name_${h.id}`, `oninput="updateManualDebt('${h.id}','name',this.value)"`, "text", h.name)}
+        ${manualInputRow(t("lbl_invested_amount"), `db_inv_${h.id}`, `oninput="updateManualDebt('${h.id}','invested',this.value)"`, "number", h.invested)}
+        ${manualInputRow(t("lbl_coupon_rate"), `db_cpn_${h.id}`, `oninput="updateManualDebt('${h.id}','coupon',this.value)"`, "number", h.coupon)}
+        ${manualInputRow(t("lbl_ytm_optional"), `db_ytm_${h.id}`, `oninput="updateManualDebt('${h.id}','ytm',this.value)"`, "number", h.ytm)}
+        ${manualInputRow(t("lbl_maturity_date"), `db_mat_${h.id}`, `oninput="updateManualDebt('${h.id}','maturity',this.value)"`, "date", h.maturity)}
+        ${manualInputRow(t("lbl_current_value"), `db_cur_${h.id}`, `oninput="updateManualDebt('${h.id}','current',this.value)"`, "number", h.current)}
+      </div>
+      <button class="holding-row-remove" onclick="removeManualDebt('${h.id}')">${t("remove_btn")}</button>
+    </div>`).join("");
+
+  return `
+    <div class="section">
+      <h2>${t("manual_h2")}</h2>
+      <p class="hint-line">${t("manual_hint")}</p>
+
+      <h3 class="manual-entry-subhead">${t("manual_equity_subhead")}</h3>
+      ${manualEquity.length === 0 ? `<p class="hint-line">${t("manual_no_equity")}</p>` : equityRows}
+      <button class="btn-add-holding" onclick="addManualEquity()">${t("btn_add_equity")}</button>
+
+      <h3 class="manual-entry-subhead" style="margin-top:22px;">${t("manual_debt_subhead")}</h3>
+      ${manualDebt.length === 0 ? `<p class="hint-line">${t("manual_no_debt")}</p>` : debtRows}
+      <button class="btn-add-holding" onclick="addManualDebt()">${t("btn_add_debt")}</button>
+
+      ${manualSummaryBoxHtml()}
+    </div>`;
+}
+
+/* ---------------- Compare screen ---------------- */
+function setCompareMode(mode) {
+  compareMode = mode;
+  render();
+}
+
+function toggleCompareAlt(id) {
+  if (compareAltIds.includes(id)) compareAltIds = compareAltIds.filter(x => x !== id);
+  else if (compareAltIds.length < 4) compareAltIds = [...compareAltIds, id];
+  render();
+}
+
+function renderCompareModeToggle() {
+  return `
+    <div class="field-block" style="margin-bottom:20px;">
+      <div class="field-block-label">${t("compare_toggle_label")}</div>
+      <div class="radio-group">
+        <button class="radio-btn ${compareMode === "bonds" ? "selected" : ""}" onclick="setCompareMode('bonds')">${t("compare_bonds_only")}</button>
+        <button class="radio-btn ${compareMode === "alternatives" ? "selected" : ""}" onclick="setCompareMode('alternatives')">${t("compare_vs_alt")}</button>
+      </div>
+    </div>`;
+}
+
+function renderCompareBondsOnly() {
+  const bonds = BONDS.filter(b => compareIds.includes(b.id));
+
+  if (bonds.length === 0) {
+    return `
+      <div class="compare-empty">
+        <div class="t1">${t("compare_empty_t1")}</div>
+        <div class="t2">${t("compare_empty_t2")}</div>
+      </div>`;
+  }
+
+  const rows = [
+    { label: t("row_issuer"), key: "issuer" },
+    { label: t("row_rating"), key: "rating" },
+    { label: t("row_coupon"), key: "coupon", fmt: (v) => v.toFixed(2) + "%" },
+    { label: t("row_ytm"), key: "ytm", fmt: (v) => v.toFixed(2) + "%", highlight: "max" },
+    { label: t("row_maturity"), key: "maturity", fmt: fmtDate, highlight: "minDate" },
+    { label: t("row_min_inv"), key: "minInvestment", fmt: fmtINR },
+    { label: t("row_freq"), key: "frequency" },
+    { label: t("row_secured"), key: "secured" },
+    { label: t("row_risk"), key: "risk" },
+    { label: t("row_horizon"), key: "horizon" },
+  ];
+
+  const maxYtm = Math.max(...bonds.map(b => b.ytm));
+  const minMaturity = Math.min(...bonds.map(b => new Date(b.maturity).getTime()));
+
+  const isHighlighted = (row, bond) => {
+    if (row.highlight === "max") return bond.ytm === maxYtm;
+    if (row.highlight === "minDate") return new Date(bond.maturity).getTime() === minMaturity;
+    return false;
+  };
+
+  const maxYield = Math.max(...bonds.map(b => b.ytm));
+
+  const tableHtml = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            ${bonds.map(b => `
+              <th class="issuer-col">
+                ${esc(b.issuer)}
+                <button class="remove-btn" onclick="toggleCompare('${b.id}')">${t("remove_btn")}</button>
+              </th>`).join("")}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(row => `
+            <tr>
+              <td class="param-label">${row.label}</td>
+              ${bonds.map(b => {
+                const raw = b[row.key];
+                const val = row.fmt ? row.fmt(raw) : raw;
+                const hl = isHighlighted(row, b);
+                return `<td class="data-cell mono ${hl ? "highlight" : ""}">${val}${hl ? `<span class="hl-tag mono">· ${t("highest_in_set")}</span>` : ""}</td>`;
+              }).join("")}
+            </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>`;
+
+  const barsHtml = `
+    <div class="return-viz">
+      <h2>${t("return_viz_h2")}</h2>
+      <p class="hint-line">${t("return_viz_hint")}</p>
+      ${bonds.map(b => `
+        <div class="bar-row">
+          <div class="bar-label">${esc(b.issuer)}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(b.ytm / maxYield) * 100}%"></div></div>
+          <div class="bar-value mono">${b.ytm.toFixed(2)}%</div>
+        </div>`).join("")}
+    </div>`;
+
+  return `
+    ${tableHtml}
+    ${barsHtml}`;
+}
+
+function renderCompareAlternatives() {
+  const picker = `
+    <div class="section-head-row" style="margin-bottom:10px;">
+      <h2 style="margin:0;font-size:15px;">${t("compare_add_instruments")}</h2>
+      <span class="sample-tag">${t("sample_tag")}</span>
+    </div>
+    <div class="radio-group" style="margin-bottom:24px;">
+      ${BONDS.map(b => `
+        <button class="radio-btn ${compareAltIds.includes(b.id) ? "selected" : ""}" onclick="toggleCompareAlt('${b.id}')">${esc(b.issuer)}</button>
+      `).join("")}
+      ${ALT_INSTRUMENTS.map(a => `
+        <button class="radio-btn ${compareAltIds.includes(a.id) ? "selected" : ""}" onclick="toggleCompareAlt('${a.id}')">${esc(a.name)}</button>
+      `).join("")}
+    </div>`;
+
+  const bondRows = altRowsFromBonds();
+  const allInstruments = [...bondRows, ...ALT_INSTRUMENTS];
+  const selected = allInstruments.filter(x => compareAltIds.includes(x.id));
+
+  if (selected.length === 0) {
+    return `
+      ${picker}
+      <div class="compare-empty">
+        <div class="t1">${t("compare_alt_empty_t1")}</div>
+        <div class="t2">${t("compare_alt_empty_t2")}</div>
+      </div>`;
+  }
+
+  const rows = [
+    { label: t("row_instrument_type"), key: "instrumentType" },
+    { label: t("row_rate"), key: "rate", fmt: (v) => v.toFixed(2) + "%" },
+    { label: t("row_return"), key: "returnPct", fmt: (v) => v.toFixed(2) + "%", highlight: "max" },
+    { label: t("row_tenure"), key: "tenure" },
+    { label: t("row_min_inv"), key: "minInvestment", fmt: fmtINR },
+    { label: t("row_risk"), key: "risk" },
+    { label: t("row_liquidity"), key: "liquidity" },
+    { label: t("row_tax"), key: "tax" },
+  ];
+
+  const maxReturn = Math.max(...selected.map(x => x.returnPct));
+  const isHighlighted = (row, x) => row.highlight === "max" && x.returnPct === maxReturn;
+
+  const tableHtml = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            ${selected.map(x => `
+              <th class="issuer-col">
+                ${esc(x.name)}
+                <button class="remove-btn" onclick="toggleCompareAlt('${x.id}')">${t("remove_btn")}</button>
+              </th>`).join("")}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(row => `
+            <tr>
+              <td class="param-label">${row.label}</td>
+              ${selected.map(x => {
+                const raw = x[row.key];
+                const val = row.fmt ? row.fmt(raw) : raw;
+                const hl = isHighlighted(row, x);
+                return `<td class="data-cell mono ${hl ? "highlight" : ""}">${val}${hl ? `<span class="hl-tag mono">· ${t("highest_in_set")}</span>` : ""}</td>`;
+              }).join("")}
+            </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>`;
+
+  const maxYield = Math.max(...selected.map(x => x.returnPct));
+  const barsHtml = `
+    <div class="return-viz">
+      <h2>${t("return_viz_alt_h2")}</h2>
+      <p class="hint-line">${t("return_viz_alt_hint")}</p>
+      ${selected.map(x => `
+        <div class="bar-row">
+          <div class="bar-label">${esc(x.name)}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(x.returnPct / maxYield) * 100}%"></div></div>
+          <div class="bar-value mono">${x.returnPct.toFixed(2)}%</div>
+        </div>`).join("")}
+    </div>`;
+
+  return `
+    ${picker}
+    ${tableHtml}
+    ${barsHtml}`;
+}
+
+function renderCompare() {
+  const body = compareMode === "alternatives" ? renderCompareAlternatives() : renderCompareBondsOnly();
+  const hint = compareMode === "alternatives" ? t("compare_hint_alt") : t("compare_hint_bonds");
+
+  return `
+    <div class="compare-wrap">
+      <h1>${t("compare_h1")}</h1>
+      <p class="hint-line">${hint}</p>
+      ${renderCompareModeToggle()}
+      ${body}
+    </div>`;
+}
+
+/* ---------------- Bond Detail Modal ---------------- */
+function openDetail(id) {
+  detailBondId = id;
+  const b = BONDS.find(x => x.id === id);
+  const inCompare = compareIds.includes(id);
+  document.getElementById("detailContent").innerHTML = `
+    <div class="modal-top">
+      <div>
+        <div class="modal-issuer">${esc(b.issuer)}</div>
+        <div class="modal-sub">${esc(b.type)} · ${b.seniority !== "N/A" ? b.seniority : "Sovereign"}</div>
+      </div>
+      <span class="rating-badge mono">${b.rating}</span>
+    </div>
+
+    <div class="modal-hero-grid">
+      <div>
+        <div class="field-label">${t("fld_ytm")} <button class="learn-more" onclick="openGlossary('ytm')">${t("learn_more")}</button></div>
+        <div class="modal-hero-val mono" style="color:var(--green)">${b.ytm.toFixed(2)}%</div>
+      </div>
+      <div>
+        <div class="field-label">${t("fld_coupon")} <button class="learn-more" onclick="openGlossary('coupon')">${t("learn_more")}</button></div>
+        <div class="modal-hero-val mono" style="color:var(--navy)">${b.coupon.toFixed(2)}%</div>
+      </div>
+    </div>
+
+    <div class="modal-field-grid">
+      ${fieldHtml(t("fld_maturity_date"), fmtDate(b.maturity), "maturity")}
+      ${fieldHtml(t("fld_face_value"), fmtINR(b.faceValue), "faceValue")}
+      ${fieldHtml(t("fld_min_inv"), fmtINR(b.minInvestment))}
+      ${fieldHtml(t("fld_pay_freq"), b.frequency)}
+      ${fieldHtml(t("fld_secured_unsecured"), b.secured)}
+      ${fieldHtml(t("fld_seniority"), b.seniority)}
+      ${fieldHtml(t("fld_risk"), b.risk)}
+      ${fieldHtml(t("fld_horizon"), b.horizon)}
+    </div>
+
+    <div class="disclaimer">${t("modal_disclaimer")}</div>
+
+    <div class="modal-actions">
+      <button class="btn-invest">${t("modal_continue_invest")}</button>
+      <button class="btn-compare ${inCompare ? "active" : ""}" onclick="toggleCompare('${b.id}'); openDetail('${b.id}')">${inCompare ? t("modal_in_compare") : t("modal_add_compare")}</button>
+    </div>`;
+  document.getElementById("detailOverlay").classList.add("open");
+}
+
+function closeDetail(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById("detailOverlay").classList.remove("open");
+  render();
+}
+
+/* ---------------- Glossary Modal ---------------- */
+function openGlossary(termId) {
+  const g = (GLOSSARY_T[currentLang] && GLOSSARY_T[currentLang][termId]) || GLOSSARY_T.en[termId];
+  document.getElementById("glossaryContent").innerHTML = `
+    <div class="sheet-handle"></div>
+    <h3 class="glossary-title">${g.title}</h3>
+    <p class="glossary-body">${g.what}</p>
+    <div class="glossary-why">
+      <div class="glossary-why-label">${t("glossary_why")}</div>
+      <p class="glossary-why-body">${g.why}</p>
+    </div>
+    ${g.example ? `<div class="glossary-why">
+      <div class="glossary-why-label">${t("glossary_example")}</div>
+      <p class="glossary-why-body">${g.example}</p>
+    </div>` : ""}
+    <button class="btn-gotit" onclick="closeGlossary()">${t("glossary_got_it")}</button>`;
+  document.getElementById("glossaryOverlay").classList.add("open");
+}
+
+function closeGlossary(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById("glossaryOverlay").classList.remove("open");
+}
+
+/* ---------------- Render dispatch ---------------- */
+function render() {
+  renderNav();
+  const root = document.getElementById("screenRoot");
+  if (screen === "explore") root.innerHTML = renderExplore();
+  else if (screen === "profile") root.innerHTML = renderProfile();
+  else if (screen === "result") root.innerHTML = renderResult();
+  else if (screen === "compare") root.innerHTML = renderCompare();
+  else if (screen === "portfolio") root.innerHTML = renderPortfolio();
+}
+
+render();
+</script>
+</body>
+</html>
